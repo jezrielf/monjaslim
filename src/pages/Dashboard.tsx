@@ -24,6 +24,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Navigation } from "@/components/Navigation";
+import { FacebookCampaignsSection } from "@/components/dashboard/FacebookCampaignsSection";
+import { UTMDebugPanel } from "@/components/dashboard/UTMDebugPanel";
 
 const Dashboard = () => {
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -217,6 +219,11 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Facebook Campaigns Section */}
+      <div className="mb-8">
+        <FacebookCampaignsSection campaigns={campaignData?.campaigns || []} />
+      </div>
+
       {/* Charts Section */}
       <Tabs defaultValue="campaigns" className="w-full mb-8">
         <TabsList className="grid w-full grid-cols-3">
@@ -288,6 +295,9 @@ const Dashboard = () => {
         data={campaignData?.campaigns || []}
         title="Análise Completa de UTMs"
       />
+
+      {/* UTM Debug Panel */}
+      <UTMDebugPanel />
       </div>
     </>
   );

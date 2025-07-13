@@ -9,7 +9,7 @@ export const generateSessionId = (): string => {
 export const extractUTMParams = (): UTMParams => {
   const urlParams = new URLSearchParams(window.location.search);
   
-  return {
+  const utmParams = {
     utm_source: urlParams.get('utm_source') || '',
     utm_medium: urlParams.get('utm_medium') || '',
     utm_campaign: urlParams.get('utm_campaign') || '',
@@ -18,6 +18,16 @@ export const extractUTMParams = (): UTMParams => {
     fbclid: urlParams.get('fbclid') || '',
     fb_source: urlParams.get('fb_source') || '',
   };
+
+  // Enhanced debugging for Facebook UTMs
+  console.log('🎯 Facebook UTM Extraction:', {
+    url: window.location.href,
+    searchParams: window.location.search,
+    extractedUTMs: utmParams,
+    isFacebookTraffic: utmParams.utm_source === 'facebook'
+  });
+
+  return utmParams;
 };
 
 // Create initial tracking data

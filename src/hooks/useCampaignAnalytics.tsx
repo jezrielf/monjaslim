@@ -62,32 +62,66 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
 
       if (timeSeriesError) throw timeSeriesError;
 
-      // Process campaign data
+      // Process campaign data with Facebook-specific handling
       const campaignMap = new Map<string, any>();
+      const facebookCampaigns = new Map<string, any>();
+      
       campaignData?.forEach((lead) => {
-        const key = `${lead.utm_source || 'Direct'}-${lead.utm_campaign || 'None'}-${lead.utm_content || 'None'}-${lead.utm_term || 'None'}`;
-        if (!campaignMap.has(key)) {
-          campaignMap.set(key, {
-            utm_source: lead.utm_source || 'Direct',
-            utm_campaign: lead.utm_campaign || 'None',
-            utm_content: lead.utm_content || 'None',
-            utm_term: lead.utm_term || 'None',
-            total_leads: 0,
-            conversions: 0,
-            total_time: 0,
-          });
+        // Check if this is Facebook traffic
+        const isFacebookLead = lead.utm_source === 'facebook' || lead.utm_source === 'fb';
+        
+        if (isFacebookLead) {
+          // Handle Facebook campaigns separately for better grouping
+          const fbKey = `${lead.utm_campaign || 'Sem_Campanha'}-${lead.utm_content || 'Sem_Anuncio'}-${lead.utm_term || 'Sem_Placement'}`;
+          if (!facebookCampaigns.has(fbKey)) {
+            facebookCampaigns.set(fbKey, {
+              utm_source: 'Facebook',
+              utm_campaign: lead.utm_campaign || 'Sem Campanha',
+              utm_content: lead.utm_content || 'Sem Anúncio',
+              utm_term: lead.utm_term || 'Sem Placement',
+              total_leads: 0,
+              conversions: 0,
+              total_time: 0,
+            });
+          }
+          const fbCampaign = facebookCampaigns.get(fbKey);
+          fbCampaign.total_leads++;
+          if (lead.aceite_final) fbCampaign.conversions++;
+          if (lead.total_time_seconds) fbCampaign.total_time += lead.total_time_seconds;
+        } else {
+          // Handle other sources
+          const key = `${lead.utm_source || 'Direto'}-${lead.utm_campaign || 'Sem_Campanha'}-${lead.utm_content || 'Sem_Conteudo'}-${lead.utm_term || 'Sem_Termo'}`;
+          if (!campaignMap.has(key)) {
+            campaignMap.set(key, {
+              utm_source: lead.utm_source || 'Direto',
+              utm_campaign: lead.utm_campaign || 'Sem Campanha',
+              utm_content: lead.utm_content || 'Sem Conteúdo',
+              utm_term: lead.utm_term || 'Sem Termo',
+              total_leads: 0,
+              conversions: 0,
+              total_time: 0,
+            });
+          }
+          const campaign = campaignMap.get(key);
+          campaign.total_leads++;
+          if (lead.aceite_final) campaign.conversions++;
+          if (lead.total_time_seconds) campaign.total_time += lead.total_time_seconds;
         }
-        const campaign = campaignMap.get(key);
-        campaign.total_leads++;
-        if (lead.aceite_final) campaign.conversions++;
-        if (lead.total_time_seconds) campaign.total_time += lead.total_time_seconds;
       });
 
-      const processedCampaigns: CampaignData[] = Array.from(campaignMap.values()).map(campaign => ({
+      // Combine Facebook and other campaigns
+      const allCampaigns = [...Array.from(campaignMap.values()), ...Array.from(facebookCampaigns.values())];
+      
+      const processedCampaigns: CampaignData[] = allCampaigns.map(campaign => ({
         ...campaign,
         conversion_rate: campaign.total_leads > 0 ? (campaign.conversions / campaign.total_leads) * 100 : 0,
         avg_time_seconds: campaign.total_leads > 0 ? campaign.total_time / campaign.total_leads : 0,
-      }));
+      })).sort((a, b) => {
+        // Sort Facebook campaigns first, then by total leads
+        if (a.utm_source === 'Facebook' && b.utm_source !== 'Facebook') return -1;
+        if (b.utm_source === 'Facebook' && a.utm_source !== 'Facebook') return 1;
+        return b.total_leads - a.total_leads;
+      });
 
       // Process KPIs
       const kpis: KPIData = {

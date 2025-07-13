@@ -24,7 +24,7 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => 
                 Cadastro Realizado com Sucesso!
               </h1>
               <p className="text-lg text-muted-foreground">
-                Recebemos suas informações e em breve nossa equipe entrará em contato.
+                Seu pedido foi recebido! Agora é muito importante que você acompanhe as próximas etapas para garantir a entrega do Monja Slim no endereço informado.
               </p>
             </div>
 
@@ -33,33 +33,33 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => 
                 Próximos passos:
               </h3>
               
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-left">
-                  <Phone className="h-5 w-5 text-accent flex-shrink-0" />
+              <div className="space-y-4">
+                <div className="flex items-start gap-3 text-left">
+                  <Phone className="h-5 w-5 text-accent flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-medium text-foreground">Aguarde nossa ligação</p>
+                    <p className="font-medium text-foreground">Aguarde nosso contato</p>
                     <p className="text-sm text-muted-foreground">
-                      Entraremos em contato no horário que você escolheu
+                      Nosso time vai ligar para confirmar todos os dados do pedido. Fique atento ao seu telefone — só realizamos a entrega após essa confirmação.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-left">
-                  <Mail className="h-5 w-5 text-accent flex-shrink-0" />
+                <div className="flex items-start gap-3 text-left">
+                  <CheckCircle className="h-5 w-5 text-accent flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-medium text-foreground">Confirme seu email</p>
+                    <p className="font-medium text-foreground">Confirmação obrigatória</p>
                     <p className="text-sm text-muted-foreground">
-                      Verifique sua caixa de entrada para mais informações
+                      Caso não consigamos falar com você pelo telefone informado, seu pedido será cancelado automaticamente.
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 text-left">
-                  <Calendar className="h-5 w-5 text-accent flex-shrink-0" />
+                <div className="flex items-start gap-3 text-left">
+                  <Calendar className="h-5 w-5 text-accent flex-shrink-0 mt-1" />
                   <div>
-                    <p className="font-medium text-foreground">Consultoria gratuita</p>
+                    <p className="font-medium text-foreground">Entrega e Pagamento</p>
                     <p className="text-sm text-muted-foreground">
-                      Nosso especialista irá apresentar o melhor tratamento para você
+                      O Monja Slim será entregado no endereço cadastrado e o pagamento deverá ser realizado no ato da entrega, direto para o entregador.
                     </p>
                   </div>
                 </div>
@@ -67,9 +67,11 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => 
             </div>
 
             <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-              <p className="text-sm text-foreground">
-                <span className="font-semibold">Importante:</span> Mantenha seu telefone disponível 
-                no horário escolhido. A ligação é gratuita e sem compromisso!
+              <p className="text-sm text-foreground leading-relaxed">
+                <span className="font-semibold">Importante:</span> Mantenha seu telefone ligado e disponível. Se não atender nossa ligação ou não houver responsável para receber o pedido no endereço, a entrega não será realizada e o pedido será cancelado.
+              </p>
+              <p className="text-sm text-foreground mt-2 font-medium text-accent">
+                Aproveite a oportunidade para começar sua transformação com o Monja Slim!
               </p>
             </div>
 

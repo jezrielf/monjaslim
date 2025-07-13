@@ -171,15 +171,29 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-medium text-lg">{getTreatmentName(data.tipoTratamento)}</p>
-              <p className="text-muted-foreground">{data.precoTratamento}</p>
+          {data.tipoTratamento ? (
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-lg">{getTreatmentName(data.tipoTratamento)}</p>
+                <p className="text-muted-foreground">{data.precoTratamento}</p>
+              </div>
+              <Badge className="bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] text-white">
+                Selecionado
+              </Badge>
             </div>
-            <Badge className="bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] text-white">
-              Selecionado
-            </Badge>
-          </div>
+          ) : (
+            <div className="text-center py-4">
+              <p className="text-muted-foreground">Nenhum tratamento selecionado</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => onEdit(3)}
+                className="mt-2 text-accent border-accent hover:bg-accent/10"
+              >
+                Selecionar Tratamento
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
 

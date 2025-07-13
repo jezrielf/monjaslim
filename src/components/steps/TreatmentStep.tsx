@@ -21,7 +21,7 @@ const treatments = [
     installments: '12x R$33,08',
     pixPrice: 'R$397,00',
     popular: false,
-    image: '/lovable-uploads/a0e94d13-fc79-404c-a0bc-ea0ce4682d5f.png',
+    image: 'https://monjaslim.site/wp-content/uploads/2025/07/3-potes--300x251.jpg',
   },
   {
     id: '5-potes',
@@ -31,7 +31,7 @@ const treatments = [
     installments: '12x R$45,58',
     pixPrice: 'R$547,00',
     popular: true,
-    image: '/lovable-uploads/039d73e5-602b-4e8c-9646-dc93b556e31b.png',
+    image: 'https://monjaslim.site/wp-content/uploads/2025/07/5-potes--300x251.jpg',
   },
   {
     id: '2-potes',
@@ -41,7 +41,7 @@ const treatments = [
     installments: '12x R$24,75',
     pixPrice: 'R$297,00',
     popular: false,
-    image: '/lovable-uploads/1c4b785d-fe6e-485a-869f-bc1799f1393e.png',
+    image: 'https://monjaslim.site/wp-content/uploads/2025/07/2-potes--300x251.jpg',
   },
   {
     id: '1-pote',
@@ -51,7 +51,7 @@ const treatments = [
     installments: '12x R$16,41',
     pixPrice: 'R$197,00',
     popular: false,
-    image: '/lovable-uploads/88a61bce-73a2-4877-9cda-d8dbc5731802.png',
+    image: 'https://monjaslim.site/wp-content/uploads/2025/07/1-pote--300x251.jpg',
   },
 ];
 

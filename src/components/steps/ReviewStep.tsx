@@ -175,7 +175,9 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-lg">{getTreatmentName(data.tipoTratamento)}</p>
-                <p className="text-muted-foreground">{data.precoTratamento}</p>
+                {data.precoTratamento && (
+                  <p className="text-muted-foreground">{data.precoTratamento}</p>
+                )}
               </div>
               <Badge className="bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] text-white">
                 Selecionado
@@ -184,6 +186,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           ) : (
             <div className="text-center py-4">
               <p className="text-muted-foreground">Nenhum tratamento selecionado</p>
+              <p className="text-xs text-muted-foreground mt-1">Debug: tipoTratamento = "{data.tipoTratamento}"</p>
               <Button
                 variant="outline"
                 size="sm"

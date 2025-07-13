@@ -200,31 +200,35 @@ export const FormWizard: React.FC = () => {
 
         // Enviar e-mail de notificação
         try {
+          console.log('Enviando e-mail com dados do tratamento:', { 
+            tipo_tratamento: formData.tipoTratamento, 
+            preco_tratamento: formData.precoTratamento 
+          });
           await supabase.functions.invoke('send-notification-email', {
             body: {
               leadData: {
-                nome: formData.nome,
-                telefone: formData.telefone,
-                email: formData.email,
-                rua: formData.rua,
-                numero: formData.numero,
-                bairro: formData.bairro,
-                cidade: formData.cidade,
-                cep: formData.cep,
-                complemento: formData.complemento,
+                nome: formData.nome || 'Não informado',
+                telefone: formData.telefone || 'Não informado',
+                email: formData.email || 'Não informado',
+                rua: formData.rua || 'Não informado',
+                numero: formData.numero || 'Não informado',
+                bairro: formData.bairro || 'Não informado',
+                cidade: formData.cidade || 'Não informado',
+                cep: formData.cep || 'Não informado',
+                complemento: formData.complemento || '',
                 modalidade_compra: formData.modalidadeCompra,
                 tipo_tratamento: formData.tipoTratamento,
                 preco_tratamento: formData.precoTratamento,
-                dia_agenda: formData.diaAgenda,
-                horario_agenda: formData.horarioAgenda,
+                dia_agenda: formData.diaAgenda || '',
+                horario_agenda: formData.horarioAgenda || '',
               },
               utmData: trackingData,
               timestamp: new Date().toLocaleString('pt-BR'),
             },
           });
-          console.log('E-mail de notificação enviado');
+          console.log('E-mail de notificação enviado com sucesso');
         } catch (emailError) {
-          console.warn('Erro ao enviar e-mail de notificação:', emailError);
+          console.error('Erro ao enviar e-mail de notificação:', emailError);
           // Não interrompe o fluxo se o e-mail falhar
         }
       }

@@ -90,8 +90,8 @@ export const FormNotificationEmail = ({
           <Heading style={h2}>🛒 Compra</Heading>
           <Text style={text}>
             <strong>Modalidade:</strong> {modalidade}<br/>
-            <strong>Tratamento:</strong> {tratamento.tipo}<br/>
-            <strong>Preço:</strong> {tratamento.preco}
+            <strong>Tratamento:</strong> {tratamento.tipo || 'Não informado'}<br/>
+            <strong>Preço:</strong> {tratamento.preco || 'Não informado'}
           </Text>
         </Section>
 

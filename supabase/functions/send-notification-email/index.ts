@@ -45,6 +45,11 @@ const handler = async (req: Request): Promise<Response> => {
     console.log("Processando envio de e-mail para novo lead:", leadData.nome);
 
     // Preparar dados para o template
+    console.log('Dados do tratamento recebidos:', { 
+      tipo_tratamento: leadData.tipo_tratamento, 
+      preco_tratamento: leadData.preco_tratamento 
+    });
+    
     const emailData = {
       nome: leadData.nome,
       telefone: leadData.telefone,

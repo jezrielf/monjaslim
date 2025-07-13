@@ -68,6 +68,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
     const treatment = treatments.find(t => t.id === treatmentId);
     if (treatment) {
       setSelectedTreatment(treatmentId);
+      console.log('Updating treatment data:', { tipoTratamento: treatmentId, precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix` });
       updateData({
         tipoTratamento: treatmentId,
         precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix`,

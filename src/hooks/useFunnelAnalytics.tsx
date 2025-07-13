@@ -110,11 +110,11 @@ export const useFunnelAnalytics = (dateRange: { from: Date; to: Date }) => {
 
       // Process by modality
       const modalityMap = new Map<string, any>();
-      const modalities = ['site-oficial', 'pagar-entrega'];
+      const modalities = ['site-sedex', 'pagar-entrega'];
 
       modalities.forEach(mod => {
         modalityMap.set(mod, {
-          modalidade: mod === 'site-oficial' ? 'Site Oficial' : 'Pagar na Entrega',
+          modalidade: mod === 'site-sedex' ? 'Site Oficial' : 'Pagar na Entrega',
           total_leads: 0,
           conversions: 0,
           total_time: 0,

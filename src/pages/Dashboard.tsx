@@ -6,10 +6,12 @@ import {
   Target,
   BarChart3,
   PieChart,
-  TrendingDown
+  TrendingDown,
+  RefreshCw
 } from "lucide-react";
 import { useCampaignAnalytics } from "@/hooks/useCampaignAnalytics";
 import { useFunnelAnalytics } from "@/hooks/useFunnelAnalytics";
+import { useQueryClient } from "@tanstack/react-query";
 import { KPICard } from "@/components/dashboard/KPICard";
 import { CampaignChart } from "@/components/dashboard/CampaignChart";
 import { FunnelChart } from "@/components/dashboard/FunnelChart";
@@ -26,9 +28,20 @@ const Dashboard = () => {
     from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
     to: new Date(),
   });
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
 
+  const queryClient = useQueryClient();
   const { data: campaignData, isLoading: campaignLoading } = useCampaignAnalytics(dateRange);
   const { data: funnelData, isLoading: funnelLoading } = useFunnelAnalytics(dateRange);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await queryClient.invalidateQueries({ queryKey: ["campaign-analytics"] });
+    await queryClient.invalidateQueries({ queryKey: ["funnel-analytics"] });
+    setLastUpdated(new Date());
+    setIsRefreshing(false);
+  };
 
   const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
@@ -62,6 +75,9 @@ const Dashboard = () => {
           <p className="text-muted-foreground">
             Análise completa de campanhas, funil de conversão e performance UTM
           </p>
+          <p className="text-xs text-muted-foreground mt-1">
+            Última atualização: {lastUpdated.toLocaleTimeString('pt-BR')}
+          </p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 mt-4 lg:mt-0">
@@ -69,6 +85,15 @@ const Dashboard = () => {
             dateRange={dateRange} 
             onDateRangeChange={setDateRange}
           />
+          <Button 
+            variant="outline" 
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="whitespace-nowrap"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? 'Atualizando...' : 'Atualizar'}
+          </Button>
           <Button variant="outline" className="whitespace-nowrap">
             Exportar Dados
           </Button>

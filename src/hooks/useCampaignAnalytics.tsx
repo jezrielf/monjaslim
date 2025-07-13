@@ -99,7 +99,7 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
         avg_funnel_time: kpiData?.length > 0 
           ? (kpiData.reduce((sum, lead) => sum + (lead.total_time_seconds || 0), 0) / kpiData.length)
           : 0,
-        site_oficial_count: kpiData?.filter(lead => lead.modalidade_compra === 'site-oficial').length || 0,
+        site_oficial_count: kpiData?.filter(lead => lead.modalidade_compra === 'site-sedex').length || 0,
         pagar_entrega_count: kpiData?.filter(lead => lead.modalidade_compra === 'pagar-entrega').length || 0,
       };
 

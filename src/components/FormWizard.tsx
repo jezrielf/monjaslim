@@ -103,7 +103,12 @@ export const FormWizard: React.FC = () => {
     setFormData(prev => ({ ...prev, ...newData }));
   };
 
-  const nextStep = () => {
+  const nextStep = (targetStep?: number) => {
+    if (targetStep) {
+      setCurrentStep(targetStep);
+      return;
+    }
+
     if (formData.modalidadeCompra === 'site-sedex') {
       // Conditional navigation for site oficial
       if (currentStep === 1) {

@@ -6,7 +6,7 @@ import { FormData } from '../FormWizard';
 interface PurchaseMethodStepProps {
   data: FormData;
   updateData: (data: Partial<FormData>) => void;
-  onNext: () => void;
+  onNext: (targetStep?: number) => void;
 }
 
 export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
@@ -16,7 +16,15 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
 }) => {
   const handleSelectMethod = (method: string) => {
     updateData({ modalidadeCompra: method });
-    onNext();
+    
+    // Navegação condicional baseada na escolha
+    if (method === 'site-sedex') {
+      // Pular direto para tratamento (step 3)
+      onNext(3);
+    } else {
+      // Ir para dados pessoais (step 2)
+      onNext(2);
+    }
   };
 
   return (

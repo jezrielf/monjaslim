@@ -37,7 +37,7 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
       // Campaign performance query
       const { data: campaignData, error: campaignError } = await supabase
         .from("leads")
-        .select("utm_source, utm_campaign, utm_content, utm_term, aceite_final, total_time_seconds")
+        .select("utm_source, utm_campaign, utm_medium, utm_content, utm_term, aceite_final, total_time_seconds")
         .gte("created_at", fromDate)
         .lte("created_at", toDate);
 
@@ -67,18 +67,27 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
       const facebookCampaigns = new Map<string, any>();
       
       campaignData?.forEach((lead) => {
-        // Check if this is Facebook traffic
-        const isFacebookLead = lead.utm_source === 'facebook' || lead.utm_source === 'fb';
+        // Check if this is Facebook traffic (novo formato: utm_source=FB)
+        const isFacebookLead = lead.utm_source === 'FB' || lead.utm_source === 'facebook';
         
         if (isFacebookLead) {
-          // Handle Facebook campaigns separately for better grouping
-          const fbKey = `${lead.utm_campaign || 'Sem_Campanha'}-${lead.utm_content || 'Sem_Anuncio'}-${lead.utm_term || 'Sem_Placement'}`;
+          // Handle Facebook campaigns separately for better grouping (novo formato com nome|id)
+          const campaignName = lead.utm_campaign?.split('|')[0] || 'Sem_Campanha';
+          const adsetName = lead.utm_medium?.split('|')[0] || 'Sem_Adset';
+          const adName = lead.utm_content?.split('|')[0] || 'Sem_Anuncio';
+          const placement = lead.utm_term || 'Sem_Placement';
+          
+          const fbKey = `${campaignName}-${adsetName}-${adName}-${placement}`;
           if (!facebookCampaigns.has(fbKey)) {
             facebookCampaigns.set(fbKey, {
               utm_source: 'Facebook',
-              utm_campaign: lead.utm_campaign || 'Sem Campanha',
-              utm_content: lead.utm_content || 'Sem Anúncio',
-              utm_term: lead.utm_term || 'Sem Placement',
+              utm_campaign: campaignName,
+              utm_medium: adsetName, // Novo: agora mostra o adset
+              utm_content: adName,
+              utm_term: placement,
+              campaign_id: lead.utm_campaign?.split('|')[1] || null,
+              adset_id: lead.utm_medium?.split('|')[1] || null,
+              ad_id: lead.utm_content?.split('|')[1] || null,
               total_leads: 0,
               conversions: 0,
               total_time: 0,

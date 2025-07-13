@@ -30,7 +30,7 @@ export const useUTMDiagnostics = () => {
         const currentUTMs = extractUTMParams();
         const utmValues = Object.values(currentUTMs).filter(v => v);
         const hasUTMs = utmValues.length > 0;
-        const isFacebook = currentUTMs.utm_source === 'facebook';
+        const isFacebook = currentUTMs.utm_source === 'FB' || currentUTMs.utm_source === 'facebook';
 
         // Missing Facebook parameters
         const expectedFacebookParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];

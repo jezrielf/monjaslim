@@ -24,8 +24,8 @@ export const FacebookCampaignsSection = ({ campaigns }: FacebookCampaignsSection
             <p className="text-sm mt-2">
               Verifique se os UTMs estão sendo enviados corretamente:
               <br />
-              <code className="text-xs bg-muted px-2 py-1 rounded mt-1 inline-block">
-                utm_source=facebook&utm_medium=cpc&utm_campaign=...
+               <code className="text-xs bg-muted px-2 py-1 rounded mt-1 inline-block">
+                utm_source=FB&utm_campaign=nome|id&utm_medium=adset|id...
               </code>
             </p>
           </div>
@@ -47,18 +47,33 @@ export const FacebookCampaignsSection = ({ campaigns }: FacebookCampaignsSection
           {facebookCampaigns.map((campaign, index) => (
             <div key={index} className="border rounded-lg p-4 space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="font-semibold text-sm">
-                  {campaign.utm_campaign}
-                </h4>
+                <div>
+                  <h4 className="font-semibold text-sm">
+                    {campaign.utm_campaign}
+                  </h4>
+                  {(campaign as any).campaign_id && (
+                    <p className="text-xs text-muted-foreground">ID: {(campaign as any).campaign_id}</p>
+                  )}
+                </div>
                 <Badge variant={campaign.conversion_rate > 50 ? "default" : "secondary"}>
                   {campaign.conversion_rate.toFixed(1)}% conversão
                 </Badge>
               </div>
-              
-              <div className="grid grid-cols-2 gap-4 text-sm">
+               
+              <div className="grid grid-cols-3 gap-4 text-sm">
+                <div>
+                  <span className="text-muted-foreground">Adset:</span>
+                  <p className="font-medium">{(campaign as any).utm_medium || 'N/A'}</p>
+                  {(campaign as any).adset_id && (
+                    <p className="text-xs text-muted-foreground">ID: {(campaign as any).adset_id}</p>
+                  )}
+                </div>
                 <div>
                   <span className="text-muted-foreground">Anúncio:</span>
                   <p className="font-medium">{campaign.utm_content}</p>
+                  {(campaign as any).ad_id && (
+                    <p className="text-xs text-muted-foreground">ID: {(campaign as any).ad_id}</p>
+                  )}
                 </div>
                 <div>
                   <span className="text-muted-foreground">Placement:</span>

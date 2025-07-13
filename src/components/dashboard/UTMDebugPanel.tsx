@@ -10,7 +10,7 @@ import { useUTMDiagnostics } from "@/hooks/useUTMDiagnostics";
 
 export const UTMDebugPanel = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [testUrl, setTestUrl] = useState("?utm_source=facebook&utm_medium=cpc&utm_campaign=teste&utm_content=anuncio_1&utm_term=feed");
+  const [testUrl, setTestUrl] = useState("?utm_source=FB&utm_campaign=CampanhaTeste|123456&utm_medium=AdsetTeste|789012&utm_content=AnuncioTeste|345678&utm_term=feed");
   const { toast } = useToast();
   const diagnostics = useUTMDiagnostics();
 
@@ -148,7 +148,7 @@ export const UTMDebugPanel = () => {
             <Button 
               variant="outline" 
               size="sm" 
-              onClick={() => window.location.href = '?utm_source=facebook&utm_medium=cpc&utm_campaign=test&utm_content=debug&utm_term=manual'}
+              onClick={() => window.location.href = '?utm_source=FB&utm_campaign=teste|123&utm_medium=adset|456&utm_content=debug|789&utm_term=manual'}
             >
               🔗 Test URL
             </Button>

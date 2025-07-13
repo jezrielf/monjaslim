@@ -23,7 +23,7 @@ export const UTMIndicator = () => {
 
   if (!isVisible || !utmData) return null;
 
-  const isFacebookTraffic = utmData.utm_source === 'facebook';
+  const isFacebookTraffic = utmData.utm_source === 'FB' || utmData.utm_source === 'facebook';
 
   return (
     <div className="fixed top-20 right-4 z-40 w-80">

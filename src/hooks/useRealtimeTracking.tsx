@@ -24,6 +24,8 @@ interface RealtimeData {
   usersByModality: Map<string, number>;
   recentActivity: OnlineUser[];
   stepActivity: RealtimeActivity[];
+  lastActivity: string | null;
+  isUsingFallback: boolean;
 }
 
 export const useRealtimeTracking = () => {
@@ -32,13 +34,15 @@ export const useRealtimeTracking = () => {
     usersByStep: new Map(),
     usersByModality: new Map(),
     recentActivity: [],
-    stepActivity: []
+    stepActivity: [],
+    lastActivity: null,
+    isUsingFallback: false
   });
   const [isConnected, setIsConnected] = useState(false);
 
   const fetchCurrentActivity = async () => {
     try {
-      // Buscar usuários ativos nos últimos 5 minutos
+      // Buscar usuários ativos nos últimos 30 minutos
       const { data: activeUsers, error } = await supabase
         .from('funnel_events')
         .select(`
@@ -48,24 +52,53 @@ export const useRealtimeTracking = () => {
           timestamp,
           leads!inner(modalidade_compra)
         `)
-        .gte('timestamp', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+        .gte('timestamp', new Date(Date.now() - 30 * 60 * 1000).toISOString())
         .order('timestamp', { ascending: false });
 
+      // Se não há atividade recente, buscar dos últimos 24h como fallback
+      let fallbackData = null;
+      if (!activeUsers || activeUsers.length === 0) {
+        const { data: fallback } = await supabase
+          .from('funnel_events')
+          .select(`
+            lead_id,
+            step_number,
+            event_type,
+            timestamp,
+            leads!inner(modalidade_compra)
+          `)
+          .gte('timestamp', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString())
+          .order('timestamp', { ascending: false })
+          .limit(20);
+        
+        fallbackData = fallback;
+      }
+
       if (error) throw error;
+
+      // Usar dados ativos ou fallback
+      const dataToProcess = activeUsers && activeUsers.length > 0 ? activeUsers : fallbackData;
+      const isUsingFallback = !activeUsers || activeUsers.length === 0;
 
       // Processar dados para obter métricas em tempo real
       const usersByStep = new Map<number, number>();
       const usersByModality = new Map<string, number>();
       const uniqueUsers = new Set<string>();
+      let lastActivityTimestamp: string | null = null;
 
       // Agrupar por usuário único (último evento de cada lead)
       const latestEventsByLead = new Map<string, any>();
       
-      activeUsers?.forEach(event => {
+      dataToProcess?.forEach(event => {
         const leadId = event.lead_id;
         if (leadId && (!latestEventsByLead.has(leadId) || 
             new Date(event.timestamp) > new Date(latestEventsByLead.get(leadId).timestamp))) {
           latestEventsByLead.set(leadId, event);
+        }
+        
+        // Atualizar último timestamp de atividade
+        if (!lastActivityTimestamp || new Date(event.timestamp) > new Date(lastActivityTimestamp)) {
+          lastActivityTimestamp = event.timestamp;
         }
       });
 
@@ -93,11 +126,13 @@ export const useRealtimeTracking = () => {
         }));
 
       setRealtimeData({
-        totalOnline: uniqueUsers.size,
+        totalOnline: isUsingFallback ? 0 : uniqueUsers.size,
         usersByStep,
         usersByModality,
         recentActivity,
-        stepActivity: []
+        stepActivity: [],
+        lastActivity: lastActivityTimestamp,
+        isUsingFallback
       });
 
     } catch (error) {

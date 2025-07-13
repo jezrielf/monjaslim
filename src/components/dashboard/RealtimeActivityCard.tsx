@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Activity, Clock } from "lucide-react";
+import { Users, Activity, Clock, AlertCircle } from "lucide-react";
 import { useRealtimeTracking } from "@/hooks/useRealtimeTracking";
 
 export const RealtimeActivityCard = () => {
@@ -43,13 +43,26 @@ export const RealtimeActivityCard = () => {
         <div className="flex items-center gap-2">
           <Activity className="h-5 w-5 text-primary" />
           <CardTitle className="text-lg">Atividade em Tempo Real</CardTitle>
-          <Badge 
-            variant={isConnected ? "default" : "secondary"} 
-            className={`ml-2 ${isConnected ? 'animate-pulse' : ''}`}
-          >
-            {isConnected ? '🔴 AO VIVO' : '⚪ OFFLINE'}
-          </Badge>
+          {realtimeData.isUsingFallback ? (
+            <Badge variant="outline" className="ml-2">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              Dados Históricos (24h)
+            </Badge>
+          ) : isConnected ? (
+            <Badge variant="default" className="ml-2 animate-pulse">
+              🔴 AO VIVO
+            </Badge>
+          ) : (
+            <Badge variant="secondary" className="ml-2">
+              ⚪ OFFLINE
+            </Badge>
+          )}
         </div>
+        {realtimeData.lastActivity && (
+          <div className="text-xs text-muted-foreground">
+            Última atividade: {formatTimeAgo(realtimeData.lastActivity)}
+          </div>
+        )}
       </CardHeader>
       
       <CardContent>
@@ -64,7 +77,7 @@ export const RealtimeActivityCard = () => {
               {realtimeData.totalOnline}
             </div>
             <p className="text-xs text-muted-foreground">
-              Últimos 5 minutos
+              {realtimeData.isUsingFallback ? 'Últimas 24 horas' : 'Últimos 30 minutos'}
             </p>
           </div>
 

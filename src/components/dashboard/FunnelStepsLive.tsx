@@ -131,7 +131,9 @@ export const FunnelStepsLive = () => {
               <div className="text-2xl font-bold text-primary">
                 {realtimeData.totalOnline}
               </div>
-              <p className="text-xs text-muted-foreground">Total no funil</p>
+              <p className="text-xs text-muted-foreground">
+                {realtimeData.isUsingFallback ? 'Dados históricos (24h)' : 'Total no funil'}
+              </p>
             </div>
             <div>
               <div className="text-2xl font-bold text-primary">

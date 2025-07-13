@@ -11,7 +11,8 @@ import { ReviewStep } from './steps/ReviewStep';
 import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
 import { useUTMTracking, useStepTracking, useSubmissionTracking, useNavigationTracking } from '@/hooks/useUTMTracking';
-import { formatTrackingForSubmission } from '@/utils/tracking';
+import { formatTrackingForSubmission, getTrackingData, getFunnelEvents } from '@/utils/tracking';
+import { useSupabaseSubmission } from '@/hooks/useSupabaseSubmission';
 
 export interface FormData {
   // Modalidade de compra
@@ -78,6 +79,9 @@ export const FormWizard: React.FC = () => {
   useStepTracking(currentStep, formData);
   const { trackSubmission } = useSubmissionTracking();
   const { trackStepBack, trackStepEdit } = useNavigationTracking();
+  
+  // Initialize Supabase submission
+  const { submitFormData, isSubmitting: isSupabaseSubmitting } = useSupabaseSubmission();
 
   const updateFormData = (newData: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...newData }));
@@ -104,18 +108,52 @@ export const FormWizard: React.FC = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Prepare full tracking data for submission
-      const fullTrackingData = formatTrackingForSubmission(formData, 
-        formData.modalidadeCompra === 'site-sedux' ? 'redirect_to_site' : 'success_page'
-      );
-      
-      console.log('🎯 Dados finais com tracking:', fullTrackingData);
-      
       // Track form submission
       trackSubmission(formData);
       
-      // Simular envio
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      // Get tracking data for Supabase submission
+      const trackingData = getTrackingData();
+      const funnelEvents = getFunnelEvents();
+      
+      if (trackingData) {
+        // Prepare data for Supabase
+        const formattedFormData = {
+          purchaseMethod: formData.modalidadeCompra,
+          nome: formData.nome,
+          telefone: formData.telefone,
+          email: formData.email,
+          cep: formData.cep,
+          rua: formData.rua,
+          bairro: formData.bairro,
+          cidade: formData.cidade,
+          numero: formData.numero,
+          complemento: formData.complemento,
+          treatmentType: formData.tipoTratamento,
+          treatmentPrice: formData.precoTratamento,
+          selectedDay: formData.diaAgenda,
+          selectedTime: formData.horarioAgenda,
+          acceptance: formData.aceiteFinal,
+        };
+
+        const conversionData = {
+          total_time: '0', // Will be calculated in the hook
+          completed_steps: 5,
+          final_action: formData.modalidadeCompra === 'site-sedex' ? 'redirect_to_site' as const : 'success_page' as const,
+          conversion_value: formData.precoTratamento,
+        };
+
+        // Submit to Supabase
+        const result = await submitFormData(
+          formattedFormData,
+          trackingData,
+          funnelEvents,
+          conversionData
+        );
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+      }
       
       // Redirecionamento para site oficial se modalidade for 'site-sedex'
       if (formData.modalidadeCompra === 'site-sedex') {
@@ -198,7 +236,7 @@ export const FormWizard: React.FC = () => {
             onSubmit={handleSubmit}
             onPrev={prevStep}
             onEdit={goToStep}
-            isSubmitting={isSubmitting}
+            isSubmitting={isSubmitting || isSupabaseSubmitting}
           />
         );
       default:

@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      funnel_events: {
+        Row: {
+          event_type: string
+          form_data_snapshot: Json | null
+          id: string
+          lead_id: string | null
+          step_number: number | null
+          time_on_step_seconds: number | null
+          timestamp: string
+          utm_data: Json | null
+        }
+        Insert: {
+          event_type: string
+          form_data_snapshot?: Json | null
+          id?: string
+          lead_id?: string | null
+          step_number?: number | null
+          time_on_step_seconds?: number | null
+          timestamp?: string
+          utm_data?: Json | null
+        }
+        Update: {
+          event_type?: string
+          form_data_snapshot?: Json | null
+          id?: string
+          lead_id?: string | null
+          step_number?: number | null
+          time_on_step_seconds?: number | null
+          timestamp?: string
+          utm_data?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "funnel_events_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      leads: {
+        Row: {
+          aceite_final: boolean | null
+          bairro: string | null
+          cep: string | null
+          cidade: string | null
+          complemento: string | null
+          completed_steps: number | null
+          conversion_value: string | null
+          created_at: string
+          data_preenchimento: string | null
+          dia_agenda: string | null
+          email: string | null
+          fb_source: string | null
+          fbclid: string | null
+          final_action: string | null
+          horario_agenda: string | null
+          id: string
+          modalidade_compra: string | null
+          nome: string | null
+          numero: string | null
+          page_url: string | null
+          preco_tratamento: string | null
+          referrer: string | null
+          rua: string | null
+          session_id: string | null
+          telefone: string | null
+          tipo_tratamento: string | null
+          total_time_seconds: number | null
+          updated_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+        }
+        Insert: {
+          aceite_final?: boolean | null
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          complemento?: string | null
+          completed_steps?: number | null
+          conversion_value?: string | null
+          created_at?: string
+          data_preenchimento?: string | null
+          dia_agenda?: string | null
+          email?: string | null
+          fb_source?: string | null
+          fbclid?: string | null
+          final_action?: string | null
+          horario_agenda?: string | null
+          id?: string
+          modalidade_compra?: string | null
+          nome?: string | null
+          numero?: string | null
+          page_url?: string | null
+          preco_tratamento?: string | null
+          referrer?: string | null
+          rua?: string | null
+          session_id?: string | null
+          telefone?: string | null
+          tipo_tratamento?: string | null
+          total_time_seconds?: number | null
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Update: {
+          aceite_final?: boolean | null
+          bairro?: string | null
+          cep?: string | null
+          cidade?: string | null
+          complemento?: string | null
+          completed_steps?: number | null
+          conversion_value?: string | null
+          created_at?: string
+          data_preenchimento?: string | null
+          dia_agenda?: string | null
+          email?: string | null
+          fb_source?: string | null
+          fbclid?: string | null
+          final_action?: string | null
+          horario_agenda?: string | null
+          id?: string
+          modalidade_compra?: string | null
+          nome?: string | null
+          numero?: string | null
+          page_url?: string | null
+          preco_tratamento?: string | null
+          referrer?: string | null
+          rua?: string | null
+          session_id?: string | null
+          telefone?: string | null
+          tipo_tratamento?: string | null
+          total_time_seconds?: number | null
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

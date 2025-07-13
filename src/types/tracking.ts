@@ -44,6 +44,8 @@ export type FunnelEventType =
   | 'step_1_modalidade'
   | 'step_2_dados_pessoais' 
   | 'step_3_tratamento'
+  | 'treatment_selection_made'
+  | 'treatment_next_clicked'
   | 'step_4_agendamento'
   | 'step_5_revisao'
   | 'form_submit'

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Check, Star } from 'lucide-react';
 import { FormData } from '../FormWizard';
+import { trackFunnelEvent } from '@/utils/tracking';
 
 interface TreatmentStepProps {
   data: FormData;
@@ -63,6 +64,8 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
 }) => {
   const [selectedTreatment, setSelectedTreatment] = useState(data.tipoTratamento || '5-potes');
   const [error, setError] = useState('');
+  const [showNextFocus, setShowNextFocus] = useState(false);
+  const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleTreatmentSelect = (treatmentId: string) => {
     const treatment = treatments.find(t => t.id === treatmentId);
@@ -74,10 +77,35 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
         precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix`,
       });
       setError('');
+      
+      // Track treatment selection
+      trackFunnelEvent('treatment_selection_made', 3, {
+        selected_treatment: treatmentId,
+        treatment_name: treatment.name,
+        treatment_price: treatment.pixPrice
+      });
+
+      // Show focus animation and scroll to next button
+      setShowNextFocus(true);
+      setTimeout(() => {
+        nextButtonRef.current?.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        });
+        nextButtonRef.current?.focus();
+        // Remove focus animation after 3 seconds
+        setTimeout(() => setShowNextFocus(false), 3000);
+      }, 300);
     }
   };
 
   const handleNext = () => {
+    // Track next button click
+    trackFunnelEvent('treatment_next_clicked', 3, {
+      selected_treatment: selectedTreatment,
+      has_selection: !!selectedTreatment
+    });
+
     if (!selectedTreatment) {
       setError('Selecione um tratamento para continuar');
       return;
@@ -185,8 +213,11 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
         </Button>
 
         <Button
+          ref={nextButtonRef}
           onClick={handleNext}
-          className="bg-gradient-primary hover:opacity-90 shadow-glow"
+          className={`bg-gradient-primary hover:opacity-90 shadow-glow transition-all duration-300 ${
+            showNextFocus ? 'animate-pulse ring-4 ring-accent/50 scale-105' : ''
+          }`}
           size="lg"
         >
           Próximo

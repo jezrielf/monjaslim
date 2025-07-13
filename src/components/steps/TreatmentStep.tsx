@@ -21,6 +21,7 @@ const treatments = [
     installments: '12x R$33,08',
     pixPrice: 'R$397,00',
     popular: false,
+    image: '/lovable-uploads/a0e94d13-fc79-404c-a0bc-ea0ce4682d5f.png',
   },
   {
     id: '5-potes',
@@ -30,6 +31,7 @@ const treatments = [
     installments: '12x R$45,58',
     pixPrice: 'R$547,00',
     popular: true,
+    image: '/lovable-uploads/039d73e5-602b-4e8c-9646-dc93b556e31b.png',
   },
   {
     id: '2-potes',
@@ -39,6 +41,7 @@ const treatments = [
     installments: '12x R$24,75',
     pixPrice: 'R$297,00',
     popular: false,
+    image: '/lovable-uploads/1c4b785d-fe6e-485a-869f-bc1799f1393e.png',
   },
   {
     id: '1-pote',
@@ -48,6 +51,7 @@ const treatments = [
     installments: '12x R$16,41',
     pixPrice: 'R$197,00',
     popular: false,
+    image: '/lovable-uploads/88a61bce-73a2-4877-9cda-d8dbc5731802.png',
   },
 ];
 
@@ -126,6 +130,15 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
             </CardHeader>
 
             <CardContent className="space-y-4">
+              {/* Imagem do produto */}
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={treatment.image} 
+                  alt={treatment.name}
+                  className="w-24 h-24 object-contain rounded-lg"
+                />
+              </div>
+
               <div className="text-center space-y-2">
                 <div className="text-sm text-red-600 font-bold line-through">
                   De {treatment.originalPrice}

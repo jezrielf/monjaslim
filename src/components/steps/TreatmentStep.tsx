@@ -135,7 +135,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
                 <img 
                   src={treatment.image} 
                   alt={treatment.name}
-                  className="w-24 h-24 object-contain rounded-lg"
+                  className="w-[300px] h-[251px] object-contain rounded-lg"
                 />
               </div>
 

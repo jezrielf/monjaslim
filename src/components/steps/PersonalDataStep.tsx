@@ -27,16 +27,22 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
   };
 
   const validatePhone = (phone: string) => {
-    const phoneRegex = /^\(?\d{2}\)?\s?\d{4,5}-?\d{4}$/;
-    return phoneRegex.test(phone.replace(/\s/g, ''));
+    const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
+    return phoneRegex.test(phone);
   };
 
   const formatPhone = (value: string) => {
     const numbers = value.replace(/\D/g, '');
     if (numbers.length <= 11) {
-      return numbers.replace(/(\d{2})(\d{4,5})(\d{4})/, '($1) $2-$3');
+      if (numbers.length <= 2) {
+        return numbers;
+      } else if (numbers.length <= 7) {
+        return numbers.replace(/(\d{2})(\d{1,5})/, '($1) $2');
+      } else {
+        return numbers.replace(/(\d{2})(\d{5})(\d{1,4})/, '($1) $2-$3');
+      }
     }
-    return value;
+    return value.slice(0, 15); // Limit to prevent overflow
   };
 
   const formatCep = (value: string) => {
@@ -93,7 +99,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
     if (!data.telefone.trim()) {
       newErrors.telefone = 'Telefone é obrigatório';
     } else if (!validatePhone(data.telefone)) {
-      newErrors.telefone = 'Telefone inválido';
+      newErrors.telefone = 'Formato: (xx) xxxxx-xxxx';
     }
 
     if (!data.email.trim()) {
@@ -144,6 +150,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
             value={data.telefone}
             onChange={(e) => updateData({ telefone: formatPhone(e.target.value) })}
             placeholder="(11) 99999-9999"
+            maxLength={15}
             className={errors.telefone ? 'border-destructive' : ''}
           />
           {errors.telefone && (

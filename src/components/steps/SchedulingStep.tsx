@@ -22,7 +22,15 @@ const daysOptions = [
 ];
 
 const timeOptions = [
-  { id: 'tarde', name: '12h às 20h', description: 'Período da tarde/noite', popular: true },
+  { id: '12:00', name: '12:00', description: 'Meio-dia', popular: false },
+  { id: '13:00', name: '13:00', description: '13 horas', popular: false },
+  { id: '14:00', name: '14:00', description: '14 horas', popular: true },
+  { id: '15:00', name: '15:00', description: '15 horas', popular: false },
+  { id: '16:00', name: '16:00', description: '16 horas', popular: false },
+  { id: '17:00', name: '17:00', description: '17 horas', popular: false },
+  { id: '18:00', name: '18:00', description: '18 horas', popular: false },
+  { id: '19:00', name: '19:00', description: '19 horas', popular: false },
+  { id: '20:00', name: '20:00', description: '20 horas', popular: false },
   { id: 'manha', name: 'Manhã do próximo dia útil', description: 'Período da manhã', popular: false },
 ];
 
@@ -124,15 +132,17 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
           <h4 className="text-lg font-medium text-foreground">Melhor horário</h4>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {timeOptions.map((time) => (
             <Card
               key={time.id}
-              className={`cursor-pointer transition-all duration-200 ${
+              className={`relative cursor-pointer transition-all duration-200 ${
                 selectedTime === time.id
                   ? 'border-accent bg-accent/10 shadow-md'
                   : 'border-border hover:border-accent/50 hover:bg-muted/50'
-              } ${time.popular ? 'ring-1 ring-accent/30' : ''}`}
+              } ${time.popular ? 'ring-1 ring-accent/30' : ''} ${
+                time.id === 'manha' ? 'md:col-span-2 lg:col-span-3' : ''
+              }`}
               onClick={() => handleTimeSelect(time.id)}
             >
               {time.popular && (
@@ -143,13 +153,11 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
                 </div>
               )}
 
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base text-center">
+              <CardContent className="p-3 text-center">
+                <div className="text-sm font-medium text-foreground">
                   {time.name}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <p className="text-sm text-muted-foreground text-center">
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
                   {time.description}
                 </p>
               </CardContent>

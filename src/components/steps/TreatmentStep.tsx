@@ -14,24 +14,6 @@ interface TreatmentStepProps {
 
 const treatments = [
   {
-    id: 'teste',
-    name: 'Tratamento Teste',
-    description: '1 pote para experimentar',
-    installments: '12x R$16,42',
-    fullPrice: 'R$197',
-    discount: '10% OFF',
-    popular: false,
-  },
-  {
-    id: 'plus',
-    name: 'Tratamento Plus',
-    description: '2 potes - Recomendado',
-    installments: '12x R$24,75',
-    fullPrice: 'R$297',
-    discount: '15% OFF',
-    popular: true,
-  },
-  {
     id: 'prime',
     name: 'Tratamento Prime',
     description: '3 potes - Mais vendido',
@@ -47,6 +29,24 @@ const treatments = [
     installments: '12x R$45,58',
     fullPrice: 'R$547',
     discount: '25% OFF',
+    popular: true,
+  },
+  {
+    id: 'plus',
+    name: 'Tratamento Plus',
+    description: '2 potes - Recomendado',
+    installments: '12x R$24,75',
+    fullPrice: 'R$297',
+    discount: '15% OFF',
+    popular: false,
+  },
+  {
+    id: 'teste',
+    name: 'Tratamento Teste',
+    description: '1 pote para experimentar',
+    installments: '12x R$16,42',
+    fullPrice: 'R$197',
+    discount: '10% OFF',
     popular: false,
   },
 ];

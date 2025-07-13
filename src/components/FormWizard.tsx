@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useUTMTracking, useStepTracking, useSubmissionTracking, useNavigationTracking } from '@/hooks/useUTMTracking';
 import { formatTrackingForSubmission, getTrackingData, getFunnelEvents } from '@/utils/tracking';
 import { useSupabaseSubmission } from '@/hooks/useSupabaseSubmission';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface FormData {
   // Modalidade de compra
@@ -195,6 +196,36 @@ export const FormWizard: React.FC = () => {
 
         if (!result.success) {
           throw new Error(result.error);
+        }
+
+        // Enviar e-mail de notificação
+        try {
+          await supabase.functions.invoke('send-notification-email', {
+            body: {
+              leadData: {
+                nome: formData.nome,
+                telefone: formData.telefone,
+                email: formData.email,
+                rua: formData.rua,
+                numero: formData.numero,
+                bairro: formData.bairro,
+                cidade: formData.cidade,
+                cep: formData.cep,
+                complemento: formData.complemento,
+                modalidade_compra: formData.modalidadeCompra,
+                tipo_tratamento: formData.tipoTratamento,
+                preco_tratamento: formData.precoTratamento,
+                dia_agenda: formData.diaAgenda,
+                horario_agenda: formData.horarioAgenda,
+              },
+              utmData: trackingData,
+              timestamp: new Date().toLocaleString('pt-BR'),
+            },
+          });
+          console.log('E-mail de notificação enviado');
+        } catch (emailError) {
+          console.warn('Erro ao enviar e-mail de notificação:', emailError);
+          // Não interrompe o fluxo se o e-mail falhar
         }
       }
       

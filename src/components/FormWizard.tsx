@@ -257,7 +257,7 @@ export const FormWizard: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
             <img 
-              src="/src/assets/monjaslim-logo.png"
+              src="/lovable-uploads/5c3e1c9b-d497-47ae-a5d6-d7257be8a9dd.png"
               alt="MonjaSlim"
               className="h-12 md:h-16 object-contain"
             />

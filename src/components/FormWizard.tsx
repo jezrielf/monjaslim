@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { ChevronLeft, ChevronRight, CheckCircle } from 'lucide-react';
+import { PurchaseMethodStep } from './steps/PurchaseMethodStep';
 import { PersonalDataStep } from './steps/PersonalDataStep';
 import { TreatmentStep } from './steps/TreatmentStep';
 import { SchedulingStep } from './steps/SchedulingStep';
@@ -11,6 +12,9 @@ import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
 
 export interface FormData {
+  // Modalidade de compra
+  modalidadeCompra: string;
+  
   // Dados pessoais
   nome: string;
   telefone: string;
@@ -35,6 +39,7 @@ export interface FormData {
 }
 
 const initialFormData: FormData = {
+  modalidadeCompra: '',
   nome: '',
   telefone: '',
   email: '',
@@ -52,10 +57,11 @@ const initialFormData: FormData = {
 };
 
 const steps = [
-  { id: 1, title: 'Dados Pessoais', description: 'Informações básicas' },
-  { id: 2, title: 'Tratamento', description: 'Escolha seu plano' },
-  { id: 3, title: 'Agendamento', description: 'Defina horário' },
-  { id: 4, title: 'Revisão', description: 'Confirme os dados' },
+  { id: 1, title: 'Modalidade', description: 'Como comprar' },
+  { id: 2, title: 'Dados Pessoais', description: 'Informações básicas' },
+  { id: 3, title: 'Tratamento', description: 'Escolha seu plano' },
+  { id: 4, title: 'Agendamento', description: 'Defina horário' },
+  { id: 5, title: 'Revisão', description: 'Confirme os dados' },
 ];
 
 export const FormWizard: React.FC = () => {
@@ -116,7 +122,7 @@ export const FormWizard: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <PersonalDataStep
+          <PurchaseMethodStep
             data={formData}
             updateData={updateFormData}
             onNext={nextStep}
@@ -124,7 +130,7 @@ export const FormWizard: React.FC = () => {
         );
       case 2:
         return (
-          <TreatmentStep
+          <PersonalDataStep
             data={formData}
             updateData={updateFormData}
             onNext={nextStep}
@@ -133,7 +139,7 @@ export const FormWizard: React.FC = () => {
         );
       case 3:
         return (
-          <SchedulingStep
+          <TreatmentStep
             data={formData}
             updateData={updateFormData}
             onNext={nextStep}
@@ -141,6 +147,15 @@ export const FormWizard: React.FC = () => {
           />
         );
       case 4:
+        return (
+          <SchedulingStep
+            data={formData}
+            updateData={updateFormData}
+            onNext={nextStep}
+            onPrev={prevStep}
+          />
+        );
+      case 5:
         return (
           <ReviewStep
             data={formData}
@@ -178,11 +193,11 @@ export const FormWizard: React.FC = () => {
           
           <Progress value={progress} className="mb-6" />
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4">
             {steps.map((step) => (
               <div
                 key={step.id}
-                className={`text-center p-3 rounded-lg border transition-all ${
+                className={`text-center p-2 md:p-3 rounded-lg border transition-all ${
                   step.id < currentStep
                     ? 'bg-success border-success text-success-foreground'
                     : step.id === currentStep
@@ -190,15 +205,15 @@ export const FormWizard: React.FC = () => {
                     : 'bg-muted border-border text-muted-foreground'
                 }`}
               >
-                <div className="flex items-center justify-center mb-2">
+                <div className="flex items-center justify-center mb-1 md:mb-2">
                   {step.id < currentStep ? (
-                    <CheckCircle className="h-5 w-5" />
+                    <CheckCircle className="h-4 w-4 md:h-5 md:w-5" />
                   ) : (
-                    <span className="text-lg font-bold">{step.id}</span>
+                    <span className="text-sm md:text-lg font-bold">{step.id}</span>
                   )}
                 </div>
-                <div className="text-sm font-medium">{step.title}</div>
-                <div className="text-xs opacity-75">{step.description}</div>
+                <div className="text-xs md:text-sm font-medium">{step.title}</div>
+                <div className="text-xs opacity-75 hidden md:block">{step.description}</div>
               </div>
             ))}
           </div>

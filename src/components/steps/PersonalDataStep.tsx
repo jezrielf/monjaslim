@@ -10,12 +10,14 @@ interface PersonalDataStepProps {
   data: FormData;
   updateData: (data: Partial<FormData>) => void;
   onNext: () => void;
+  onPrev: () => void;
 }
 
 export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
   data,
   updateData,
   onNext,
+  onPrev,
 }) => {
   const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});

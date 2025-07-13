@@ -53,6 +53,14 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
     return times[id] || id;
   };
 
+  const getModalidadeCompraName = (id: string): string => {
+    const modalidades = {
+      'site-sedex': 'Site oficial + Sedex',
+      'pagar-entrega': 'Pagar na entrega'
+    };
+    return modalidades[id as keyof typeof modalidades] || id;
+  };
+
   const handleAcceptToggle = () => {
     updateData({ aceiteFinal: !data.aceiteFinal });
   };
@@ -68,6 +76,28 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </p>
       </div>
 
+      {/* Modalidade de Compra */}
+      <Card className="border-border">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+          <div className="flex items-center gap-2">
+            <Package className="h-5 w-5 text-accent" />
+            <CardTitle className="text-lg">Modalidade de Compra</CardTitle>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onEdit(1)}
+            className="text-accent border-accent hover:bg-accent/10"
+          >
+            <Edit2 className="h-4 w-4 mr-1" />
+            Editar
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <p className="font-medium">{getModalidadeCompraName(data.modalidadeCompra)}</p>
+        </CardContent>
+      </Card>
+
       {/* Dados Pessoais */}
       <Card className="border-border">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
@@ -78,7 +108,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onEdit(1)}
+            onClick={() => onEdit(2)}
             className="text-accent border-accent hover:bg-accent/10"
           >
             <Edit2 className="h-4 w-4 mr-1" />
@@ -126,7 +156,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onEdit(2)}
+            onClick={() => onEdit(3)}
             className="text-accent border-accent hover:bg-accent/10"
           >
             <Edit2 className="h-4 w-4 mr-1" />
@@ -156,7 +186,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => onEdit(3)}
+            onClick={() => onEdit(4)}
             className="text-accent border-accent hover:bg-accent/10"
           >
             <Edit2 className="h-4 w-4 mr-1" />

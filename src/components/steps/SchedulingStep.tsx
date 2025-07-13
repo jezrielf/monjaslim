@@ -22,16 +22,16 @@ const daysOptions = [
 ];
 
 const timeOptions = [
-  { id: '12:00', name: '12:00', description: 'Meio-dia', popular: false },
-  { id: '13:00', name: '13:00', description: '13 horas', popular: false },
-  { id: '14:00', name: '14:00', description: '14 horas', popular: true },
-  { id: '15:00', name: '15:00', description: '15 horas', popular: false },
-  { id: '16:00', name: '16:00', description: '16 horas', popular: false },
-  { id: '17:00', name: '17:00', description: '17 horas', popular: false },
-  { id: '18:00', name: '18:00', description: '18 horas', popular: false },
-  { id: '19:00', name: '19:00', description: '19 horas', popular: false },
-  { id: '20:00', name: '20:00', description: '20 horas', popular: false },
-  { id: 'manha', name: 'Manhã do próximo dia útil', description: 'Período da manhã', popular: false },
+  { id: '12:00', name: '12:00', description: 'Meio-dia' },
+  { id: '13:00', name: '13:00', description: '13 horas' },
+  { id: '14:00', name: '14:00', description: '14 horas' },
+  { id: '15:00', name: '15:00', description: '15 horas' },
+  { id: '16:00', name: '16:00', description: '16 horas' },
+  { id: '17:00', name: '17:00', description: '17 horas' },
+  { id: '18:00', name: '18:00', description: '18 horas' },
+  { id: '19:00', name: '19:00', description: '19 horas' },
+  { id: '20:00', name: '20:00', description: '20 horas' },
+  { id: 'manha', name: 'Manhã do próximo dia útil', description: 'Período da manhã' },
 ];
 
 export const SchedulingStep: React.FC<SchedulingStepProps> = ({
@@ -43,6 +43,18 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   const [selectedDay, setSelectedDay] = useState(data.diaAgenda);
   const [selectedTime, setSelectedTime] = useState(data.horarioAgenda);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Get current day to disable it
+  const getCurrentDayId = () => {
+    const today = new Date();
+    const dayNames = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+    return dayNames[today.getDay()];
+  };
+
+  const currentDayId = getCurrentDayId();
+
+  // Filter available days (exclude current day)
+  const availableDays = daysOptions.filter(day => day.id !== currentDayId);
 
   const handleDaySelect = (dayId: string) => {
     setSelectedDay(dayId);
@@ -96,7 +108,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {daysOptions.map((day) => (
+          {availableDays.map((day) => (
             <Card
               key={day.id}
               className={`cursor-pointer transition-all duration-200 ${
@@ -106,12 +118,12 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
               }`}
               onClick={() => handleDaySelect(day.id)}
             >
-              <CardContent className="p-4 text-center">
-                <div className="text-sm font-medium text-foreground">
+              <CardContent className="p-3 md:p-4 text-center">
+                <div className="text-xs md:text-sm font-medium text-foreground">
                   {day.name}
                 </div>
                 {day.available && (
-                  <Badge variant="secondary" className="mt-2 text-xs">
+                  <Badge variant="secondary" className="mt-1 md:mt-2 text-xs">
                     Disponível
                   </Badge>
                 )}
@@ -119,6 +131,14 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
             </Card>
           ))}
         </div>
+        
+        {daysOptions.find(day => day.id === currentDayId) && (
+          <div className="p-3 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground">
+              <span className="font-medium">Hoje ({daysOptions.find(day => day.id === currentDayId)?.name})</span> não está disponível para agendamento.
+            </p>
+          </div>
+        )}
 
         {errors.dia && (
           <p className="text-sm text-destructive text-center">{errors.dia}</p>
@@ -136,25 +156,17 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
           {timeOptions.map((time) => (
             <Card
               key={time.id}
-              className={`relative cursor-pointer transition-all duration-200 ${
+              className={`cursor-pointer transition-all duration-200 ${
                 selectedTime === time.id
                   ? 'border-accent bg-accent/10 shadow-md'
                   : 'border-border hover:border-accent/50 hover:bg-muted/50'
-              } ${time.popular ? 'ring-1 ring-accent/30' : ''} ${
+              } ${
                 time.id === 'manha' ? 'md:col-span-2 lg:col-span-3' : ''
               }`}
               onClick={() => handleTimeSelect(time.id)}
             >
-              {time.popular && (
-                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-gold text-accent-foreground text-xs">
-                    Mais procurado
-                  </Badge>
-                </div>
-              )}
-
-              <CardContent className="p-3 text-center">
-                <div className="text-sm font-medium text-foreground">
+              <CardContent className="p-2 md:p-3 text-center">
+                <div className="text-xs md:text-sm font-medium text-foreground">
                   {time.name}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">

@@ -66,6 +66,9 @@ export type Database = {
           conversion_value: string | null
           created_at: string
           data_preenchimento: string | null
+          delivery_date: string | null
+          delivery_notes: string | null
+          delivery_status: string | null
           dia_agenda: string | null
           email: string | null
           fb_source: string | null
@@ -77,6 +80,9 @@ export type Database = {
           nome: string | null
           numero: string | null
           page_url: string | null
+          payment_date: string | null
+          payment_notes: string | null
+          payment_status: string | null
           preco_tratamento: string | null
           referrer: string | null
           rua: string | null
@@ -102,6 +108,9 @@ export type Database = {
           conversion_value?: string | null
           created_at?: string
           data_preenchimento?: string | null
+          delivery_date?: string | null
+          delivery_notes?: string | null
+          delivery_status?: string | null
           dia_agenda?: string | null
           email?: string | null
           fb_source?: string | null
@@ -113,6 +122,9 @@ export type Database = {
           nome?: string | null
           numero?: string | null
           page_url?: string | null
+          payment_date?: string | null
+          payment_notes?: string | null
+          payment_status?: string | null
           preco_tratamento?: string | null
           referrer?: string | null
           rua?: string | null
@@ -138,6 +150,9 @@ export type Database = {
           conversion_value?: string | null
           created_at?: string
           data_preenchimento?: string | null
+          delivery_date?: string | null
+          delivery_notes?: string | null
+          delivery_status?: string | null
           dia_agenda?: string | null
           email?: string | null
           fb_source?: string | null
@@ -149,6 +164,9 @@ export type Database = {
           nome?: string | null
           numero?: string | null
           page_url?: string | null
+          payment_date?: string | null
+          payment_notes?: string | null
+          payment_status?: string | null
           preco_tratamento?: string | null
           referrer?: string | null
           rua?: string | null

@@ -72,6 +72,13 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
   };
 
   const handleCEPValidated = (cep: string, isValid: boolean) => {
+    // Se vier com valor especial "site-oficial"
+    if (cep === 'site-oficial') {
+      updateData({ modalidadeCompra: 'site-sedex' });
+      onNext(3); // Vai direto para ReviewStep
+      return;
+    }
+    
     setCepValidated(true);
     setIsValidForDelivery(isValid);
     

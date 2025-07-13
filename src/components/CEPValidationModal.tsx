@@ -133,8 +133,8 @@ export const CEPValidationModal: React.FC<CEPValidationModalProps> = ({
       city: validationResult?.city
     });
     
-    // Redirecionar para o site oficial
-    window.open('https://monjaslim.com.br', '_blank');
+    // Informar ao componente pai para definir modalidade e ir para ReviewStep
+    onCEPValidated('site-oficial', true); // Passa flag especial
     onClose();
   };
 

@@ -169,7 +169,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               <p className="font-medium text-lg">{getTreatmentName(data.tipoTratamento)}</p>
               <p className="text-muted-foreground">{data.precoTratamento}</p>
             </div>
-            <Badge className="bg-gradient-to-r from-[hsl(194_100%_27%)] to-[hsl(194_85%_35%)] text-white">
+            <Badge className="bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] text-white">
               Selecionado
             </Badge>
           </div>

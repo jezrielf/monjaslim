@@ -104,7 +104,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
           >
             {treatment.popular && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-to-r from-[hsl(194_100%_27%)] to-[hsl(194_85%_35%)] text-white px-3 py-1">
+                <Badge className="bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] text-white px-3 py-1">
                   <Star className="w-3 h-3 mr-1" />
                   Mais Popular
                 </Badge>

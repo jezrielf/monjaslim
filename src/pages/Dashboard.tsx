@@ -17,6 +17,8 @@ import { CampaignChart } from "@/components/dashboard/CampaignChart";
 import { FunnelChart } from "@/components/dashboard/FunnelChart";
 import { TimeSeriesChart } from "@/components/dashboard/TimeSeriesChart";
 import { UTMTable } from "@/components/dashboard/UTMTable";
+import { RealtimeActivityCard } from "@/components/dashboard/RealtimeActivityCard";
+import { FunnelStepsLive } from "@/components/dashboard/FunnelStepsLive";
 import { DateRangePicker, DateRange } from "@/components/dashboard/DateRangePicker";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -97,6 +99,16 @@ const Dashboard = () => {
           <Button variant="outline" className="whitespace-nowrap">
             Exportar Dados
           </Button>
+        </div>
+      </div>
+
+      {/* Realtime Activity Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="lg:col-span-2">
+          <RealtimeActivityCard />
+        </div>
+        <div className="lg:col-span-1">
+          <FunnelStepsLive />
         </div>
       </div>
 

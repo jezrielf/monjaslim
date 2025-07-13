@@ -42,7 +42,7 @@ export const useRealtimeTracking = () => {
 
   const fetchCurrentActivity = async () => {
     try {
-      // Buscar usuários ativos nos últimos 30 minutos
+      // Buscar usuários ativos nos últimos 30 segundos
       const { data: activeUsers, error } = await supabase
         .from('funnel_events')
         .select(`
@@ -52,7 +52,7 @@ export const useRealtimeTracking = () => {
           timestamp,
           leads!inner(modalidade_compra)
         `)
-        .gte('timestamp', new Date(Date.now() - 30 * 60 * 1000).toISOString())
+        .gte('timestamp', new Date(Date.now() - 30 * 1000).toISOString())
         .order('timestamp', { ascending: false });
 
       // Se não há atividade recente, buscar dos últimos 24h como fallback
@@ -163,8 +163,8 @@ export const useRealtimeTracking = () => {
         setIsConnected(status === 'SUBSCRIBED');
       });
 
-    // Polling fallback a cada 10 segundos
-    const pollingInterval = setInterval(fetchCurrentActivity, 10000);
+    // Polling fallback a cada 5 segundos para maior responsividade
+    const pollingInterval = setInterval(fetchCurrentActivity, 5000);
 
     return () => {
       supabase.removeChannel(channel);

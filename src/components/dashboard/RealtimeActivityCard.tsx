@@ -77,7 +77,7 @@ export const RealtimeActivityCard = () => {
               {realtimeData.totalOnline}
             </div>
             <p className="text-xs text-muted-foreground">
-              {realtimeData.isUsingFallback ? 'Últimas 24 horas' : 'Últimos 30 minutos'}
+              {realtimeData.isUsingFallback ? 'Últimas 24 horas' : 'Últimos 30 segundos'}
             </p>
           </div>
 

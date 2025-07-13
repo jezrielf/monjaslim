@@ -10,6 +10,8 @@ import { SchedulingStep } from './steps/SchedulingStep';
 import { ReviewStep } from './steps/ReviewStep';
 import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
+import { useUTMTracking, useStepTracking, useSubmissionTracking, useNavigationTracking } from '@/hooks/useUTMTracking';
+import { formatTrackingForSubmission } from '@/utils/tracking';
 
 export interface FormData {
   // Modalidade de compra
@@ -71,6 +73,12 @@ export const FormWizard: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
 
+  // Initialize Facebook tracking
+  const { trackingData } = useUTMTracking();
+  useStepTracking(currentStep, formData);
+  const { trackSubmission } = useSubmissionTracking();
+  const { trackStepBack, trackStepEdit } = useNavigationTracking();
+
   const updateFormData = (newData: Partial<FormData>) => {
     setFormData(prev => ({ ...prev, ...newData }));
   };
@@ -83,19 +91,28 @@ export const FormWizard: React.FC = () => {
 
   const prevStep = () => {
     if (currentStep > 1) {
+      trackStepBack(currentStep, currentStep - 1);
       setCurrentStep(currentStep - 1);
     }
   };
 
   const goToStep = (step: number) => {
+    trackStepEdit(currentStep, step);
     setCurrentStep(step);
   };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-      // Aqui será feita a integração com Supabase e Google Sheets
-      console.log('Dados finais:', formData);
+      // Prepare full tracking data for submission
+      const fullTrackingData = formatTrackingForSubmission(formData, 
+        formData.modalidadeCompra === 'site-sedux' ? 'redirect_to_site' : 'success_page'
+      );
+      
+      console.log('🎯 Dados finais com tracking:', fullTrackingData);
+      
+      // Track form submission
+      trackSubmission(formData);
       
       // Simular envio
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -111,6 +128,8 @@ export const FormWizard: React.FC = () => {
         
         const redirectUrl = treatmentUrls[formData.tipoTratamento as keyof typeof treatmentUrls];
         if (redirectUrl) {
+          // Track redirect before leaving page
+          trackSubmission(formData, redirectUrl);
           window.location.href = redirectUrl;
           return;
         }
@@ -199,7 +218,7 @@ export const FormWizard: React.FC = () => {
         {/* Header com steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[hsl(194_100%_27%)] to-[hsl(194_85%_35%)] bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] bg-clip-text text-transparent">
               Cadastro de Lead
             </h1>
             <div className="text-sm text-muted-foreground">

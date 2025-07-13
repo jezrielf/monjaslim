@@ -51,4 +51,8 @@ export type FunnelEventType =
   | 'form_submit'
   | 'redirect_to_site'
   | 'step_back'
-  | 'step_edit';
+  | 'step_edit'
+  | 'cep_validation_requested'
+  | 'cep_validation_failed'
+  | 'delivery_blocked_invalid_cep'
+  | 'redirected_to_official_site';

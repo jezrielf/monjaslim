@@ -59,7 +59,7 @@ const initialFormData: FormData = {
   aceiteFinal: false,
 };
 
-const steps = [
+const allSteps = [
   { id: 1, title: 'Modalidade', description: 'Como comprar' },
   { id: 2, title: 'Dados Pessoais', description: 'Informações básicas' },
   { id: 3, title: 'Tratamento', description: 'Escolha seu plano' },
@@ -73,6 +73,22 @@ export const FormWizard: React.FC = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
+
+  // Dynamic steps based on purchase method
+  const getActiveSteps = () => {
+    if (formData.modalidadeCompra === 'site-sedex') {
+      // Site oficial: Modalidade -> Tratamento -> Revisão
+      return [
+        { id: 1, title: 'Modalidade', description: 'Como comprar' },
+        { id: 3, title: 'Tratamento', description: 'Escolha seu plano' },
+        { id: 5, title: 'Revisão', description: 'Confirme os dados' },
+      ];
+    }
+    // Pagar na entrega: todas as etapas
+    return allSteps;
+  };
+
+  const steps = getActiveSteps();
 
   // Initialize Facebook tracking
   const { trackingData } = useUTMTracking();
@@ -88,15 +104,37 @@ export const FormWizard: React.FC = () => {
   };
 
   const nextStep = () => {
-    if (currentStep < steps.length) {
-      setCurrentStep(currentStep + 1);
+    if (formData.modalidadeCompra === 'site-sedex') {
+      // Conditional navigation for site oficial
+      if (currentStep === 1) {
+        setCurrentStep(3); // Modalidade -> Tratamento
+      } else if (currentStep === 3) {
+        setCurrentStep(5); // Tratamento -> Revisão
+      }
+    } else {
+      // Normal navigation for pagar na entrega
+      if (currentStep < 5) {
+        setCurrentStep(currentStep + 1);
+      }
     }
   };
 
   const prevStep = () => {
-    if (currentStep > 1) {
-      trackStepBack(currentStep, currentStep - 1);
-      setCurrentStep(currentStep - 1);
+    if (formData.modalidadeCompra === 'site-sedex') {
+      // Conditional navigation for site oficial
+      if (currentStep === 5) {
+        trackStepBack(currentStep, 3);
+        setCurrentStep(3); // Revisão -> Tratamento
+      } else if (currentStep === 3) {
+        trackStepBack(currentStep, 1);
+        setCurrentStep(1); // Tratamento -> Modalidade
+      }
+    } else {
+      // Normal navigation for pagar na entrega
+      if (currentStep > 1) {
+        trackStepBack(currentStep, currentStep - 1);
+        setCurrentStep(currentStep - 1);
+      }
     }
   };
 
@@ -155,13 +193,13 @@ export const FormWizard: React.FC = () => {
         }
       }
       
-      // Redirecionamento para site oficial se modalidade for 'site-sedex'
+      // Redirecionamento para site oficial se modalidade for 'site-sedx'
       if (formData.modalidadeCompra === 'site-sedex') {
         const treatmentUrls = {
-          'prime': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-definitiva-pote-90-dias/',
-          'power': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-total-pote-150-dias/',
-          'plus': 'https://www.monjaslim.com.br/produtos/bloqueio-do-efeito-sanfona-pote-60-dias/',
-          'teste': 'https://www.monjaslim.com.br/produtos/acao-de-choque-metabolica-pote-30-dias/'
+          '1-pote': 'https://www.monjaslim.com.br/produtos/acao-de-choque-metabolica-pote-30-dias/',
+          '2-potes': 'https://www.monjaslim.com.br/produtos/bloqueio-do-efeito-sanfona-pote-60-dias/',
+          '3-potes': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-definitiva-pote-90-dias/',
+          '5-potes': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-total-pote-150-dias/'
         };
         
         const redirectUrl = treatmentUrls[formData.tipoTratamento as keyof typeof treatmentUrls];
@@ -244,7 +282,16 @@ export const FormWizard: React.FC = () => {
     }
   };
 
-  const progress = (currentStep / steps.length) * 100;
+  // Calculate progress based on current flow
+  const getStepIndex = () => {
+    if (formData.modalidadeCompra === 'site-sedex') {
+      const siteSteps = [1, 3, 5];
+      return siteSteps.indexOf(currentStep) + 1;
+    }
+    return currentStep;
+  };
+  
+  const progress = (getStepIndex() / steps.length) * 100;
 
   if (isSuccess) {
     return <SuccessMessage onNewForm={handleNewForm} />;
@@ -262,35 +309,43 @@ export const FormWizard: React.FC = () => {
               className="h-12 md:h-16 object-contain"
             />
             <div className="text-sm text-muted-foreground">
-              Etapa {currentStep} de {steps.length}
+              Etapa {getStepIndex()} de {steps.length}
             </div>
           </div>
           
           <Progress value={progress} className="mb-6" />
           
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-4">
-            {steps.map((step) => (
-              <div
-                key={step.id}
-                className={`text-center p-2 md:p-3 rounded-lg border transition-all ${
-                  step.id < currentStep
-                    ? 'bg-success border-success text-success-foreground'
-                    : step.id === currentStep
-                    ? 'bg-accent border-accent text-accent-foreground shadow-teal'
-                    : 'bg-muted border-border text-muted-foreground'
-                }`}
-              >
-                <div className="flex items-center justify-center mb-1 md:mb-2">
-                  {step.id < currentStep ? (
-                    <CheckCircle className="h-4 w-4 md:h-5 md:w-5" />
-                  ) : (
-                    <span className="text-sm md:text-lg font-bold">{step.id}</span>
-                  )}
+          <div className={`grid gap-2 md:gap-4 ${formData.modalidadeCompra === 'site-sedex' ? 'grid-cols-3' : 'grid-cols-2 md:grid-cols-5'}`}>
+            {steps.map((step, index) => {
+              const stepNumber = index + 1;
+              const isCompleted = formData.modalidadeCompra === 'site-sedex' 
+                ? (currentStep === 5 && step.id < 5) || (currentStep === 3 && step.id === 1)
+                : step.id < currentStep;
+              const isCurrent = step.id === currentStep;
+              
+              return (
+                <div
+                  key={step.id}
+                  className={`text-center p-2 md:p-3 rounded-lg border transition-all ${
+                    isCompleted
+                      ? 'bg-success border-success text-success-foreground'
+                      : isCurrent
+                      ? 'bg-accent border-accent text-accent-foreground shadow-teal'
+                      : 'bg-muted border-border text-muted-foreground'
+                  }`}
+                >
+                  <div className="flex items-center justify-center mb-1 md:mb-2">
+                    {isCompleted ? (
+                      <CheckCircle className="h-4 w-4 md:h-5 md:w-5" />
+                    ) : (
+                      <span className="text-sm md:text-lg font-bold">{stepNumber}</span>
+                    )}
+                  </div>
+                  <div className="text-xs md:text-sm font-medium">{step.title}</div>
+                  <div className="text-xs opacity-75 hidden md:block">{step.description}</div>
                 </div>
-                <div className="text-xs md:text-sm font-medium">{step.title}</div>
-                <div className="text-xs opacity-75 hidden md:block">{step.description}</div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

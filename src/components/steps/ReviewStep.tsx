@@ -25,10 +25,10 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
 }) => {
   const getTreatmentName = (id: string) => {
     const treatments: Record<string, string> = {
-      teste: 'Tratamento Teste (1 pote)',
-      plus: 'Tratamento Plus (2 potes)',
-      prime: 'Tratamento Prime (3 potes)',
-      power: 'Tratamento Power (5 potes)',
+      '1-pote': 'Ação de Choque Metabólica (1 pote - 30 dias)',
+      '2-potes': 'Bloqueio do Efeito Sanfona (2 potes - 60 dias)',
+      '3-potes': 'Reprogramação Corporal Definitiva (3 potes - 90 dias)',
+      '5-potes': 'Reprogramação Corporal Total (5 potes - 150 dias)',
     };
     return treatments[id] || id;
   };
@@ -65,6 +65,8 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
     updateData({ aceiteFinal: !data.aceiteFinal });
   };
 
+  const isSiteOficial = data.modalidadeCompra === 'site-sedex';
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
@@ -72,7 +74,10 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           Revise suas informações
         </h3>
         <p className="text-muted-foreground">
-          Confira todos os dados antes de finalizar
+          {isSiteOficial 
+            ? 'Confira seu tratamento escolhido antes do redirecionamento'
+            : 'Confira todos os dados antes de finalizar'
+          }
         </p>
       </div>
 
@@ -98,53 +103,55 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </CardContent>
       </Card>
 
-      {/* Dados Pessoais */}
-      <Card className="border-border">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <div className="flex items-center gap-2">
-            <User className="h-5 w-5 text-accent" />
-            <CardTitle className="text-lg">Dados Pessoais</CardTitle>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEdit(2)}
-            className="text-accent border-accent hover:bg-accent/10"
-          >
-            <Edit2 className="h-4 w-4 mr-1" />
-            Editar
-          </Button>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <span className="text-sm text-muted-foreground">Nome:</span>
-              <p className="font-medium">{data.nome}</p>
+      {/* Dados Pessoais - Only show for pagar na entrega */}
+      {!isSiteOficial && (
+        <Card className="border-border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <div className="flex items-center gap-2">
+              <User className="h-5 w-5 text-accent" />
+              <CardTitle className="text-lg">Dados Pessoais</CardTitle>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(2)}
+              className="text-accent border-accent hover:bg-accent/10"
+            >
+              <Edit2 className="h-4 w-4 mr-1" />
+              Editar
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <span className="text-sm text-muted-foreground">Nome:</span>
+                <p className="font-medium">{data.nome}</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Telefone:</span>
+                <p className="font-medium">{data.telefone}</p>
+              </div>
             </div>
             <div>
-              <span className="text-sm text-muted-foreground">Telefone:</span>
-              <p className="font-medium">{data.telefone}</p>
+              <span className="text-sm text-muted-foreground">Email:</span>
+              <p className="font-medium">{data.email}</p>
             </div>
-          </div>
-          <div>
-            <span className="text-sm text-muted-foreground">Email:</span>
-            <p className="font-medium">{data.email}</p>
-          </div>
-          <div className="flex items-start gap-2">
-            <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
-            <div>
-              <span className="text-sm text-muted-foreground">Endereço:</span>
-              <p className="font-medium">
-                {data.rua}, {data.numero}
-                {data.complemento && `, ${data.complemento}`}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {data.bairro}, {data.cidade} - {data.cep}
-              </p>
+            <div className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
+              <div>
+                <span className="text-sm text-muted-foreground">Endereço:</span>
+                <p className="font-medium">
+                  {data.rua}, {data.numero}
+                  {data.complemento && `, ${data.complemento}`}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {data.bairro}, {data.cidade} - {data.cep}
+                </p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tratamento Escolhido */}
       <Card className="border-border">
@@ -176,36 +183,38 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </CardContent>
       </Card>
 
-      {/* Agendamento */}
-      <Card className="border-border">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-accent" />
-            <CardTitle className="text-lg">Agendamento</CardTitle>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onEdit(4)}
-            className="text-accent border-accent hover:bg-accent/10"
-          >
-            <Edit2 className="h-4 w-4 mr-1" />
-            Editar
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <div>
-              <span className="text-sm text-muted-foreground">Melhor dia:</span>
-              <p className="font-medium">{getDayName(data.diaAgenda)}</p>
+      {/* Agendamento - Only show for pagar na entrega */}
+      {!isSiteOficial && (
+        <Card className="border-border">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+            <div className="flex items-center gap-2">
+              <Calendar className="h-5 w-5 text-accent" />
+              <CardTitle className="text-lg">Agendamento</CardTitle>
             </div>
-            <div>
-              <span className="text-sm text-muted-foreground">Melhor horário:</span>
-              <p className="font-medium">{getTimeName(data.horarioAgenda)}</p>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(4)}
+              className="text-accent border-accent hover:bg-accent/10"
+            >
+              <Edit2 className="h-4 w-4 mr-1" />
+              Editar
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <div>
+                <span className="text-sm text-muted-foreground">Melhor dia:</span>
+                <p className="font-medium">{getDayName(data.diaAgenda)}</p>
+              </div>
+              <div>
+                <span className="text-sm text-muted-foreground">Melhor horário:</span>
+                <p className="font-medium">{getTimeName(data.horarioAgenda)}</p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
 
       <Separator />
 
@@ -231,9 +240,13 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
             </Button>
             <div className="flex-1">
               <p className="text-sm text-foreground leading-relaxed">
-                Confirmo que todas as informações estão corretas e autorizo o contato da equipe 
-                no horário informado para apresentação do tratamento escolhido. 
-                <span className="text-accent font-medium"> Não há compromisso de compra.</span>
+                {isSiteOficial 
+                  ? 'Confirmo que escolhi o tratamento correto e autorizo o redirecionamento para o site oficial do MonjaSlim.'
+                  : 'Confirmo que todas as informações estão corretas e autorizo o contato da equipe no horário informado para apresentação do tratamento escolhido.'
+                }
+                {!isSiteOficial && (
+                  <span className="text-accent font-medium"> Não há compromisso de compra.</span>
+                )}
               </p>
             </div>
           </div>
@@ -261,12 +274,12 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
           {isSubmitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Enviando...
+              {isSiteOficial ? 'Redirecionando...' : 'Enviando...'}
             </>
           ) : (
             <>
               <Send className="mr-2 h-4 w-4" />
-              Confirmar e Enviar
+              {isSiteOficial ? 'Ir para Site Oficial' : 'Confirmar e Enviar'}
             </>
           )}
         </Button>

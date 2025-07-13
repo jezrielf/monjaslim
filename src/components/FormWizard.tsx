@@ -256,9 +256,11 @@ export const FormWizard: React.FC = () => {
         {/* Header com steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-[hsl(208_100%_24%)] to-[hsl(208_85%_30%)] bg-clip-text text-transparent">
-              Cadastro de Lead
-            </h1>
+            <img 
+              src="/src/assets/monjaslim-logo.png"
+              alt="MonjaSlim"
+              className="h-12 md:h-16 object-contain"
+            />
             <div className="text-sm text-muted-foreground">
               Etapa {currentStep} de {steps.length}
             </div>

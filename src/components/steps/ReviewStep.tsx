@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { ChevronLeft, Edit2, Send, Loader2, CheckCircle, User, Package, Calendar, MapPin } from 'lucide-react';
+import { ChevronLeft, Edit2, Send, Loader2, CheckCircle, User, Package, Calendar, MapPin, ExternalLink, CreditCard, Zap } from 'lucide-react';
 import { FormData } from '../FormWizard';
 
 interface ReviewStepProps {
@@ -233,6 +233,63 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </Card>
       )}
 
+      {/* Informações Importantes - Only for site oficial */}
+      {isSiteOficial && (
+        <Card className="bg-blue-50 border-blue-200 dark:bg-blue-950/50 dark:border-blue-800">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <ExternalLink className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              <CardTitle className="text-lg text-blue-800 dark:text-blue-300">
+                🛡️ Informações Importantes
+              </CardTitle>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="bg-blue-100 dark:bg-blue-900/50 p-2 rounded-full">
+                <ExternalLink className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div>
+                <p className="font-medium text-blue-800 dark:text-blue-300 mb-1">
+                  Redirecionamento Seguro
+                </p>
+                <p className="text-sm text-blue-700 dark:text-blue-400">
+                  Você será redirecionado para o site oficial do MonjaSlim no produto escolhido
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="bg-green-100 dark:bg-green-900/50 p-2 rounded-full">
+                <CreditCard className="h-4 w-4 text-green-600 dark:text-green-400" />
+              </div>
+              <div>
+                <p className="font-medium text-green-800 dark:text-green-300 mb-1">
+                  Parcelamento Sem Juros
+                </p>
+                <p className="text-sm text-green-700 dark:text-green-400">
+                  Divida em até <strong>12x sem juros</strong> no cartão de crédito
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <div className="bg-amber-100 dark:bg-amber-900/50 p-2 rounded-full">
+                <Zap className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div>
+                <p className="font-medium text-amber-800 dark:text-amber-300 mb-1">
+                  Desconto Especial PIX
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-400">
+                  <strong>10% de desconto</strong> para pagamentos via PIX
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Separator />
 
       {/* Aceite Final */}
@@ -258,7 +315,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
             <div className="flex-1">
               <p className="text-sm text-foreground leading-relaxed">
                 {isSiteOficial 
-                  ? 'Confirmo que escolhi o tratamento correto e autorizo o redirecionamento para o site oficial do MonjaSlim.'
+                  ? 'Confirmo que escolhi o tratamento correto e autorizo o redirecionamento para o site oficial do MonjaSlim, onde poderei aproveitar o parcelamento em até 12x sem juros ou 10% de desconto no PIX.'
                   : 'Confirmo que todas as informações estão corretas e autorizo o contato da equipe no horário informado para apresentação do tratamento escolhido.'
                 }
                 {!isSiteOficial && (

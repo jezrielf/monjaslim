@@ -20,7 +20,7 @@ const treatments = [
     originalPrice: 'R$997,00',
     installments: '12x R$33,08',
     pixPrice: 'R$397,00',
-    popular: true,
+    popular: false,
   },
   {
     id: '5-potes',
@@ -29,7 +29,7 @@ const treatments = [
     originalPrice: 'R$1.712,00',
     installments: '12x R$45,58',
     pixPrice: 'R$547,00',
-    popular: false,
+    popular: true,
   },
   {
     id: '2-potes',
@@ -57,7 +57,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
   onNext,
   onPrev,
 }) => {
-  const [selectedTreatment, setSelectedTreatment] = useState(data.tipoTratamento);
+  const [selectedTreatment, setSelectedTreatment] = useState(data.tipoTratamento || '5-potes');
   const [error, setError] = useState('');
 
   const handleTreatmentSelect = (treatmentId: string) => {
@@ -127,14 +127,14 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
 
             <CardContent className="space-y-4">
               <div className="text-center space-y-2">
-                <div className="text-sm text-muted-foreground line-through">
+                <div className="text-sm text-red-600 font-bold line-through">
                   De {treatment.originalPrice}
                 </div>
                 <div className="text-lg font-bold text-foreground">
                   {treatment.installments} sem juros
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  ou <span className="text-green-600 font-semibold">{treatment.pixPrice} no Pix</span>
+                  ou <span className="text-green-600 font-bold">{treatment.pixPrice} no Pix</span>
                 </div>
               </div>
 

@@ -4,6 +4,7 @@ import { useDeliveryManagement } from "@/hooks/useDeliveryManagement";
 import { DeliveryCard } from "@/components/delivery/DeliveryCard";
 import { DeliveryFilters } from "@/components/delivery/DeliveryFilters";
 import { StatusUpdateModal } from "@/components/delivery/StatusUpdateModal";
+import { Navigation } from "@/components/Navigation";
 import { Loader } from "lucide-react";
 
 export default function Pedidos() {
@@ -43,8 +44,10 @@ export default function Pedidos() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8">
+    <>
+      <Navigation />
+      <div className="min-h-screen bg-background">
+        <div className="container mx-auto px-4 py-8 pt-20">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-primary mb-2">
@@ -95,7 +98,8 @@ export default function Pedidos() {
           onOpenChange={setModalOpen}
           onUpdate={handleStatusUpdate}
         />
+        </div>
       </div>
-    </div>
+    </>
   );
 }

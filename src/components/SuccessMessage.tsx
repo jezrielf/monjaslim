@@ -2,14 +2,13 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Phone, Mail, Calendar } from 'lucide-react';
-
 interface SuccessMessageProps {
   onNewForm: () => void;
 }
-
-export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => {
-  return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+export const SuccessMessage: React.FC<SuccessMessageProps> = ({
+  onNewForm
+}) => {
+  return <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="max-w-2xl w-full">
         <Card className="border-success shadow-lg">
           <CardContent className="p-8 text-center space-y-6">
@@ -20,16 +19,16 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => 
             </div>
 
             <div>
-              <h1 className="text-3xl font-bold text-foreground mb-2">
+              <h1 className="text-3xl font-bold mb-2 text-slate-50">
                 Cadastro Realizado com Sucesso!
               </h1>
-              <p className="text-lg text-muted-foreground">
+              <p className="text-lg text-slate-200">
                 Seu pedido foi recebido! Agora é muito importante que você acompanhe as próximas etapas para garantir a entrega do Monja Slim no endereço informado.
               </p>
             </div>
 
             <div className="bg-muted/30 rounded-lg p-6 space-y-4">
-              <h3 className="text-lg font-semibold text-foreground mb-4">
+              <h3 className="font-semibold text-foreground mb-4 text-2xl">
                 Próximos passos:
               </h3>
               
@@ -75,17 +74,11 @@ export const SuccessMessage: React.FC<SuccessMessageProps> = ({ onNewForm }) => 
               </p>
             </div>
 
-            <Button
-              onClick={onNewForm}
-              variant="outline"
-              size="lg"
-              className="border-accent text-accent hover:bg-accent/10"
-            >
+            <Button onClick={onNewForm} variant="outline" size="lg" className="border-accent bg-orange-500 hover:bg-orange-400 text-slate-950">
               Fazer Novo Cadastro
             </Button>
           </CardContent>
         </Card>
       </div>
-    </div>
-  );
+    </div>;
 };

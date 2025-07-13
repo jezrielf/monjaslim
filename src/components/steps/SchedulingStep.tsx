@@ -4,41 +4,83 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Calendar, Clock } from 'lucide-react';
 import { FormData } from '../FormWizard';
-
 interface SchedulingStepProps {
   data: FormData;
   updateData: (data: Partial<FormData>) => void;
   onNext: () => void;
   onPrev: () => void;
 }
-
-const daysOptions = [
-  { id: 'segunda', name: 'Segunda-feira', available: true },
-  { id: 'terca', name: 'Terça-feira', available: true },
-  { id: 'quarta', name: 'Quarta-feira', available: true },
-  { id: 'quinta', name: 'Quinta-feira', available: true },
-  { id: 'sexta', name: 'Sexta-feira', available: true },
-  { id: 'sabado', name: 'Sábado', available: true },
-];
-
-const timeOptions = [
-  { id: '12:00', name: '12:00', description: 'Meio-dia' },
-  { id: '13:00', name: '13:00', description: '13 horas' },
-  { id: '14:00', name: '14:00', description: '14 horas' },
-  { id: '15:00', name: '15:00', description: '15 horas' },
-  { id: '16:00', name: '16:00', description: '16 horas' },
-  { id: '17:00', name: '17:00', description: '17 horas' },
-  { id: '18:00', name: '18:00', description: '18 horas' },
-  { id: '19:00', name: '19:00', description: '19 horas' },
-  { id: '20:00', name: '20:00', description: '20 horas' },
-  { id: 'manha', name: 'Manhã do próximo dia útil', description: 'Período da manhã' },
-];
-
+const daysOptions = [{
+  id: 'segunda',
+  name: 'Segunda-feira',
+  available: true
+}, {
+  id: 'terca',
+  name: 'Terça-feira',
+  available: true
+}, {
+  id: 'quarta',
+  name: 'Quarta-feira',
+  available: true
+}, {
+  id: 'quinta',
+  name: 'Quinta-feira',
+  available: true
+}, {
+  id: 'sexta',
+  name: 'Sexta-feira',
+  available: true
+}, {
+  id: 'sabado',
+  name: 'Sábado',
+  available: true
+}];
+const timeOptions = [{
+  id: '12:00',
+  name: '12:00',
+  description: 'Meio-dia'
+}, {
+  id: '13:00',
+  name: '13:00',
+  description: '13 horas'
+}, {
+  id: '14:00',
+  name: '14:00',
+  description: '14 horas'
+}, {
+  id: '15:00',
+  name: '15:00',
+  description: '15 horas'
+}, {
+  id: '16:00',
+  name: '16:00',
+  description: '16 horas'
+}, {
+  id: '17:00',
+  name: '17:00',
+  description: '17 horas'
+}, {
+  id: '18:00',
+  name: '18:00',
+  description: '18 horas'
+}, {
+  id: '19:00',
+  name: '19:00',
+  description: '19 horas'
+}, {
+  id: '20:00',
+  name: '20:00',
+  description: '20 horas'
+}, {
+  id: 'manha',
+  name: 'Manhã do próximo dia útil',
+  description: 'Período da manhã'
+}];
 export const SchedulingStep: React.FC<SchedulingStepProps> = ({
   data,
   updateData,
   onNext,
-  onPrev,
+  onPrev
 }) => {
   const [selectedDay, setSelectedDay] = useState(data.diaAgenda);
   const [selectedTime, setSelectedTime] = useState(data.horarioAgenda);
@@ -50,47 +92,47 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
     const dayNames = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
     return dayNames[today.getDay()];
   };
-
   const currentDayId = getCurrentDayId();
 
   // Filter available days (exclude current day)
   const availableDays = daysOptions.filter(day => day.id !== currentDayId);
-
   const handleDaySelect = (dayId: string) => {
     setSelectedDay(dayId);
-    updateData({ diaAgenda: dayId });
-    setErrors({ ...errors, dia: '' });
+    updateData({
+      diaAgenda: dayId
+    });
+    setErrors({
+      ...errors,
+      dia: ''
+    });
   };
-
   const handleTimeSelect = (timeId: string) => {
     setSelectedTime(timeId);
-    updateData({ horarioAgenda: timeId });
-    setErrors({ ...errors, horario: '' });
+    updateData({
+      horarioAgenda: timeId
+    });
+    setErrors({
+      ...errors,
+      horario: ''
+    });
   };
-
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-
     if (!selectedDay) {
       newErrors.dia = 'Selecione um dia da semana';
     }
-
     if (!selectedTime) {
       newErrors.horario = 'Selecione um horário';
     }
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleNext = () => {
     if (validateForm()) {
       onNext();
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="text-center mb-8">
         <h3 className="text-xl font-semibold text-foreground mb-2">
           Quando podemos entrar em contato?
@@ -108,41 +150,25 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {availableDays.map((day) => (
-            <Card
-              key={day.id}
-              className={`cursor-pointer transition-all duration-200 ${
-                selectedDay === day.id
-                  ? 'border-accent bg-accent/10 shadow-md'
-                  : 'border-border hover:border-accent/50 hover:bg-muted/50'
-              }`}
-              onClick={() => handleDaySelect(day.id)}
-            >
+          {availableDays.map(day => <Card key={day.id} className={`cursor-pointer transition-all duration-200 ${selectedDay === day.id ? 'border-accent bg-accent/10 shadow-md' : 'border-border hover:border-accent/50 hover:bg-muted/50'}`} onClick={() => handleDaySelect(day.id)}>
               <CardContent className="p-3 md:p-4 text-center">
                 <div className="text-xs md:text-sm font-medium text-foreground">
                   {day.name}
                 </div>
-                {day.available && (
-                  <Badge variant="secondary" className="mt-1 md:mt-2 text-xs">
+                {day.available && <Badge variant="secondary" className="mt-1 md:mt-2 text-xs">
                     Disponível
-                  </Badge>
-                )}
+                  </Badge>}
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
         
-        {daysOptions.find(day => day.id === currentDayId) && (
-          <div className="p-3 bg-muted rounded-lg">
+        {daysOptions.find(day => day.id === currentDayId) && <div className="p-3 bg-muted rounded-lg">
             <p className="text-sm text-muted-foreground">
               <span className="font-medium">Hoje ({daysOptions.find(day => day.id === currentDayId)?.name})</span> não está disponível para agendamento.
             </p>
-          </div>
-        )}
+          </div>}
 
-        {errors.dia && (
-          <p className="text-sm text-destructive text-center">{errors.dia}</p>
-        )}
+        {errors.dia && <p className="text-sm text-destructive text-center">{errors.dia}</p>}
       </div>
 
       {/* Seleção do horário */}
@@ -153,18 +179,7 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {timeOptions.map((time) => (
-            <Card
-              key={time.id}
-              className={`cursor-pointer transition-all duration-200 ${
-                selectedTime === time.id
-                  ? 'border-accent bg-accent/10 shadow-md'
-                  : 'border-border hover:border-accent/50 hover:bg-muted/50'
-              } ${
-                time.id === 'manha' ? 'md:col-span-2 lg:col-span-3' : ''
-              }`}
-              onClick={() => handleTimeSelect(time.id)}
-            >
+          {timeOptions.map(time => <Card key={time.id} className={`cursor-pointer transition-all duration-200 ${selectedTime === time.id ? 'border-accent bg-accent/10 shadow-md' : 'border-border hover:border-accent/50 hover:bg-muted/50'} ${time.id === 'manha' ? 'md:col-span-2 lg:col-span-3' : ''}`} onClick={() => handleTimeSelect(time.id)}>
               <CardContent className="p-2 md:p-3 text-center">
                 <div className="text-xs md:text-sm font-medium text-foreground">
                   {time.name}
@@ -173,46 +188,27 @@ export const SchedulingStep: React.FC<SchedulingStepProps> = ({
                   {time.description}
                 </p>
               </CardContent>
-            </Card>
-          ))}
+            </Card>)}
         </div>
 
-        {errors.horario && (
-          <p className="text-sm text-destructive text-center">{errors.horario}</p>
-        )}
+        {errors.horario && <p className="text-sm text-destructive text-center">{errors.horario}</p>}
       </div>
 
       {/* Informações adicionais */}
       <Card className="bg-muted/30 border-accent/20">
-        <CardContent className="p-4">
-          <div className="text-center text-sm text-muted-foreground space-y-2">
-            <p>📞 Ligação gratuita e sem compromisso</p>
-            <p>⏱️ Duração aproximada: 5 a 10 minutos</p>
-            <p>🎯 Consultoria personalizada para seu caso</p>
-          </div>
-        </CardContent>
+        
       </Card>
 
       <div className="flex justify-between pt-6">
-        <Button
-          onClick={onPrev}
-          variant="outline"
-          size="lg"
-          className="border-border hover:bg-muted"
-        >
+        <Button onClick={onPrev} variant="outline" size="lg" className="border-border hover:bg-muted">
           <ChevronLeft className="mr-2 h-4 w-4" />
           Voltar
         </Button>
 
-        <Button
-          onClick={handleNext}
-          className="bg-gradient-primary hover:opacity-90 shadow-glow"
-          size="lg"
-        >
+        <Button onClick={handleNext} className="bg-gradient-primary hover:opacity-90 shadow-glow" size="lg">
           Próximo
           <ChevronRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };

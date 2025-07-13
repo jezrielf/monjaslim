@@ -100,6 +100,22 @@ export const FormWizard: React.FC = () => {
       // Simular envio
       await new Promise(resolve => setTimeout(resolve, 2000));
       
+      // Redirecionamento para site oficial se modalidade for 'site-sedex'
+      if (formData.modalidadeCompra === 'site-sedex') {
+        const treatmentUrls = {
+          'prime': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-definitiva-pote-90-dias/',
+          'power': 'https://www.monjaslim.com.br/produtos/reprogramacao-corporal-total-pote-150-dias/',
+          'plus': 'https://www.monjaslim.com.br/produtos/bloqueio-do-efeito-sanfona-pote-60-dias/',
+          'teste': 'https://www.monjaslim.com.br/produtos/acao-de-choque-metabolica-pote-30-dias/'
+        };
+        
+        const redirectUrl = treatmentUrls[formData.tipoTratamento as keyof typeof treatmentUrls];
+        if (redirectUrl) {
+          window.location.href = redirectUrl;
+          return;
+        }
+      }
+      
       setIsSuccess(true);
     } catch (error) {
       toast({
@@ -183,7 +199,7 @@ export const FormWizard: React.FC = () => {
         {/* Header com steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-gold bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-[hsl(194_100%_27%)] to-[hsl(194_85%_35%)] bg-clip-text text-transparent">
               Cadastro de Lead
             </h1>
             <div className="text-sm text-muted-foreground">
@@ -201,7 +217,7 @@ export const FormWizard: React.FC = () => {
                   step.id < currentStep
                     ? 'bg-success border-success text-success-foreground'
                     : step.id === currentStep
-                    ? 'bg-accent border-accent text-accent-foreground shadow-gold'
+                    ? 'bg-accent border-accent text-accent-foreground shadow-teal'
                     : 'bg-muted border-border text-muted-foreground'
                 }`}
               >

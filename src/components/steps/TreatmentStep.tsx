@@ -97,14 +97,14 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
             key={treatment.id}
             className={`relative cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedTreatment === treatment.id
-                ? 'border-accent shadow-gold bg-card/80'
+                ? 'border-accent shadow-teal bg-card/80'
                 : 'border-border hover:border-accent/50'
             } ${treatment.popular ? 'ring-2 ring-accent' : ''}`}
             onClick={() => handleTreatmentSelect(treatment.id)}
           >
             {treatment.popular && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-gradient-gold text-accent-foreground px-3 py-1">
+                <Badge className="bg-gradient-to-r from-[hsl(194_100%_27%)] to-[hsl(194_85%_35%)] text-white px-3 py-1">
                   <Star className="w-3 h-3 mr-1" />
                   Mais Popular
                 </Badge>

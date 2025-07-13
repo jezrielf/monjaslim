@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ChevronRight, MapPin, Loader2 } from 'lucide-react';
+import { ChevronRight, ChevronLeft, MapPin, Loader2 } from 'lucide-react';
 import { FormData } from '../FormWizard';
 import { useToast } from '@/hooks/use-toast';
 
@@ -262,7 +262,15 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-end pt-6">
+      <div className="flex justify-between pt-6">
+        <Button
+          onClick={onPrev}
+          variant="outline"
+          size="lg"
+        >
+          <ChevronLeft className="mr-2 h-4 w-4" />
+          Voltar
+        </Button>
         <Button
           onClick={handleNext}
           className="bg-gradient-primary hover:opacity-90 shadow-glow"

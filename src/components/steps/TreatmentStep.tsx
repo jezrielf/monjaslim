@@ -14,39 +14,39 @@ interface TreatmentStepProps {
 
 const treatments = [
   {
-    id: 'prime',
-    name: 'Tratamento Prime',
-    description: '3 potes - Mais vendido',
+    id: '3-potes',
+    name: '3 Potes',
+    description: 'Tratamento mais vendido',
+    originalPrice: 'R$997,00',
     installments: '12x R$33,08',
-    fullPrice: 'R$397',
-    discount: '20% OFF',
-    popular: false,
-  },
-  {
-    id: 'power',
-    name: 'Tratamento Power',
-    description: '5 potes - Resultado garantido',
-    installments: '12x R$45,58',
-    fullPrice: 'R$547',
-    discount: '25% OFF',
+    pixPrice: 'R$397,00',
     popular: true,
   },
   {
-    id: 'plus',
-    name: 'Tratamento Plus',
-    description: '2 potes - Recomendado',
-    installments: '12x R$24,75',
-    fullPrice: 'R$297',
-    discount: '15% OFF',
+    id: '5-potes',
+    name: '5 Potes',
+    description: 'Máximo resultado',
+    originalPrice: 'R$1.712,00',
+    installments: '12x R$45,58',
+    pixPrice: 'R$547,00',
     popular: false,
   },
   {
-    id: 'teste',
-    name: 'Tratamento Teste',
-    description: '1 pote para experimentar',
-    installments: '12x R$16,42',
-    fullPrice: 'R$197',
-    discount: '10% OFF',
+    id: '2-potes',
+    name: '2 Potes',
+    description: 'Para iniciantes',
+    originalPrice: 'R$697,00',
+    installments: '12x R$24,75',
+    pixPrice: 'R$297,00',
+    popular: false,
+  },
+  {
+    id: '1-pote',
+    name: '1 Pote',
+    description: 'Para testar',
+    originalPrice: 'R$397,00',
+    installments: '12x R$16,41',
+    pixPrice: 'R$197,00',
     popular: false,
   },
 ];
@@ -66,7 +66,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
       setSelectedTreatment(treatmentId);
       updateData({
         tipoTratamento: treatmentId,
-        precoTratamento: `${treatment.installments} ou ${treatment.fullPrice} à vista`,
+        precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix`,
       });
       setError('');
     }
@@ -126,19 +126,16 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
             </CardHeader>
 
             <CardContent className="space-y-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-foreground">
-                  {treatment.installments}
+              <div className="text-center space-y-2">
+                <div className="text-sm text-muted-foreground line-through">
+                  De {treatment.originalPrice}
+                </div>
+                <div className="text-lg font-bold text-foreground">
+                  {treatment.installments} sem juros
                 </div>
                 <div className="text-sm text-muted-foreground">
-                  ou {treatment.fullPrice} à vista
+                  ou <span className="text-green-600 font-semibold">{treatment.pixPrice} no Pix</span>
                 </div>
-              </div>
-
-              <div className="text-center">
-                <Badge variant="secondary" className="bg-accent/20 text-accent-foreground">
-                  {treatment.discount}
-                </Badge>
               </div>
 
               <div className="pt-2">
@@ -146,7 +143,7 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
                   <div>✓ Garantia de 30 dias</div>
                   <div>✓ Frete grátis para todo Brasil</div>
                   <div>✓ Suporte especializado</div>
-                  {treatment.id === 'power' && (
+                  {treatment.id === '5-potes' && (
                     <div className="text-accent">✓ Resultado garantido ou dinheiro de volta</div>
                   )}
                 </div>

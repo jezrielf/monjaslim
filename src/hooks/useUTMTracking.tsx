@@ -66,14 +66,41 @@ export const useStepTracking = (currentStep: number, formData?: any) => {
 
       const eventType = eventMap[currentStep];
       if (eventType) {
-        // Para step 3 (tratamento), aguardar um pouco para garantir que os dados foram atualizados
-        if (currentStep === 3) {
-          setTimeout(() => {
+        // Delays inteligentes baseados no step
+        const getDelay = (step: number) => {
+          if (step === 3) return 300; // Step tratamento - aguardar seleção
+          if (step === 4) return 200; // Step agendamento - aguardar dados
+          if (step === 5) return 250; // Step revisão - aguardar validação
+          return 100; // Outros steps
+        };
+
+        const delay = getDelay(currentStep);
+        
+        console.log(`⏱️ Tracking step ${currentStep} com delay de ${delay}ms`);
+        
+        setTimeout(() => {
+          // Retry logic para steps críticos
+          const attemptTracking = (attempt = 1) => {
+            console.log(`📊 Tentativa ${attempt} de tracking para step ${currentStep}:`, {
+              eventType,
+              formData: {
+                tipoTratamento: formData?.tipoTratamento,
+                precoTratamento: formData?.precoTratamento,
+                modalidadeCompra: formData?.modalidadeCompra
+              }
+            });
+            
             trackFunnelEvent(eventType as any, currentStep, formData);
-          }, 150);
-        } else {
-          trackFunnelEvent(eventType as any, currentStep, formData);
-        }
+            
+            // Para step 3, verificar se dados foram capturados
+            if (currentStep === 3 && attempt === 1 && (!formData?.tipoTratamento || !formData?.precoTratamento)) {
+              console.log('⚠️ Dados incompletos no step 3, tentando novamente...');
+              setTimeout(() => attemptTracking(2), 200);
+            }
+          };
+          
+          attemptTracking();
+        }, delay);
       }
 
       previousStep.current = currentStep;

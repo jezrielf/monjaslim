@@ -100,8 +100,18 @@ export const FormWizard: React.FC = () => {
   // Initialize Supabase submission
   const { submitFormData, isSubmitting: isSupabaseSubmitting } = useSupabaseSubmission();
 
-  const updateFormData = (newData: Partial<FormData>) => {
-    setFormData(prev => ({ ...prev, ...newData }));
+  const updateFormData = (newData: Partial<FormData>, callback?: () => void) => {
+    setFormData(prev => {
+      const updated = { ...prev, ...newData };
+      console.log('📝 FormData atualizado:', updated);
+      
+      // Executar callback após update
+      if (callback) {
+        setTimeout(callback, 50);
+      }
+      
+      return updated;
+    });
   };
 
   const nextStep = (targetStep?: number) => {

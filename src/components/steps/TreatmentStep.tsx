@@ -65,31 +65,40 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
   const [selectedTreatment, setSelectedTreatment] = useState(data.tipoTratamento || '5-potes');
   const [error, setError] = useState('');
   const [showNextFocus, setShowNextFocus] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const nextButtonRef = useRef<HTMLButtonElement>(null);
 
   const handleTreatmentSelect = (treatmentId: string) => {
     const treatment = treatments.find(t => t.id === treatmentId);
     if (treatment) {
       setSelectedTreatment(treatmentId);
+      setIsUpdating(true);
+      
       const treatmentData = {
         tipoTratamento: treatmentId,
         precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix`,
       };
       
-      console.log('Updating treatment data:', treatmentData);
-      // Garantir que dados sejam atualizados primeiro
+      console.log('🔄 Atualizando dados do tratamento:', treatmentData);
+      
+      // Atualizar dados e aguardar confirmação visual
       updateData(treatmentData);
       setError('');
       
-      // Aguardar antes do tracking para garantir que dados foram salvos
+      // Aguardar confirmação da atualização
       setTimeout(() => {
+        setIsUpdating(false);
+        
+        // Track após confirmação
         trackFunnelEvent('treatment_selection_made', 3, {
           selected_treatment: treatmentId,
           treatment_name: treatment.name,
           treatment_price: treatment.pixPrice,
           form_data_updated: treatmentData
         });
-      }, 100);
+        
+        console.log('✅ Dados do tratamento atualizados com sucesso');
+      }, 200);
 
       // Show focus animation and scroll to next button
       setShowNextFocus(true);
@@ -101,21 +110,35 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
         nextButtonRef.current?.focus();
         // Remove focus animation after 3 seconds
         setTimeout(() => setShowNextFocus(false), 3000);
-      }, 300);
+      }, 400);
     }
   };
 
   const handleNext = () => {
-    // Track next button click
-    trackFunnelEvent('treatment_next_clicked', 3, {
-      selected_treatment: selectedTreatment,
-      has_selection: !!selectedTreatment
-    });
-
     if (!selectedTreatment) {
       setError('Selecione um tratamento para continuar');
       return;
     }
+    
+    if (isUpdating) {
+      console.log('⏳ Aguardando finalização da atualização dos dados...');
+      setTimeout(() => handleNext(), 100);
+      return;
+    }
+
+    // Track next button click com dados atuais
+    trackFunnelEvent('treatment_next_clicked', 3, {
+      selected_treatment: selectedTreatment,
+      has_selection: !!selectedTreatment,
+      tipo_tratamento: data.tipoTratamento,
+      preco_tratamento: data.precoTratamento
+    });
+
+    console.log('🚀 Avançando para próximo step com dados:', {
+      tipoTratamento: data.tipoTratamento,
+      precoTratamento: data.precoTratamento
+    });
+    
     onNext();
   };
 

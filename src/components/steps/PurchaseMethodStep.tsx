@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, Truck, CreditCard, MapPin, AlertCircle, ExternalLink } from 'lucide-react';
+import { Check, Truck, DollarSign, MapPin, AlertCircle, ExternalLink } from 'lucide-react';
 import { FormData } from '../FormWizard';
 import { CEPValidationModal } from '../CEPValidationModal';
 import { trackFunnelEvent } from '@/utils/tracking';
@@ -119,14 +119,22 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
   const cepStatus = getCurrentCEPStatus();
 
   return (
-    <div className="space-y-4 md:space-y-6">
-      <div className="text-center">
-        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
-          Como você gostaria de adquirir?
-        </h2>
-        <p className="text-sm md:text-base text-muted-foreground">
-          Escolha a modalidade de compra que melhor atende suas necessidades
+    <div className="space-y-6 md:space-y-8">
+      <div className="text-center space-y-4">
+        <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+          MonjaSlim: Sua Transformação Começa Aqui
+        </h1>
+        <p className="text-sm md:text-base text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+          Descubra o poder do MonjaSlim, o suplemento natural de última geração criado para quem busca emagrecimento saudável, controle da ansiedade alimentar e mais energia no dia a dia. Fórmula avançada, resultados reais e segurança total. Escolha como quer receber o seu MonjaSlim!
         </p>
+        <div className="pt-2">
+          <h2 className="text-lg md:text-xl font-semibold text-foreground mb-1">
+            Como você prefere adquirir o MonjaSlim?
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Escolha a modalidade que melhor atende sua necessidade:
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-3 md:gap-4">
@@ -134,23 +142,43 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
           className="cursor-pointer transition-all hover:shadow-md border-2 hover:border-primary/50"
           onClick={() => handleSelectMethod('site-sedex')}
         >
-          <CardContent className="p-4 md:p-6">
-            <div className="flex items-start gap-3 md:gap-4">
-              <div className="bg-primary/10 p-2 md:p-3 rounded-full">
-                <Truck className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+          <CardContent className="p-6 md:p-8">
+            <div className="flex items-start gap-4 md:gap-6">
+              <div className="bg-primary/10 p-3 md:p-4 rounded-full">
+                <Truck className="h-6 w-6 md:h-7 md:w-7 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
-                  Quero comprar pelo site oficial e receber via Sedex
+                <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
+                  Quero Receber em Todo o Brasil
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Compra online com entrega rápida e segura via Sedex
+                <p className="text-base font-medium text-muted-foreground mb-3">
+                  Entrega Rápida e Segura via SEDEX
                 </p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Check className="h-4 w-4 text-green-600" />
-                  <span className="text-xs md:text-sm text-green-600 font-medium">
-                    Pagamento seguro online
-                  </span>
+                <div className="space-y-2">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">
+                      Compre online no site oficial, com garantia e pagamento seguro
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">
+                      Receba seu MonjaSlim em qualquer lugar do Brasil
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">
+                      Suporte e acompanhamento do pedido do início ao fim
+                    </span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-muted-foreground">
+                      Pagamento 100% seguro e protegido
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -161,40 +189,55 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
           className="cursor-pointer transition-all hover:shadow-md border-2 hover:border-primary/50"
           onClick={() => handleSelectMethod('pagar-entrega')}
         >
-          <CardContent className="p-4 md:p-6">
-            <div className="flex items-start gap-3 md:gap-4">
-              <div className="bg-primary/10 p-2 md:p-3 rounded-full">
-                <CreditCard className="h-5 w-5 md:h-6 md:w-6 text-primary" />
+          <CardContent className="p-6 md:p-8">
+            <div className="flex items-start gap-4 md:gap-6">
+              <div className="bg-primary/10 p-3 md:p-4 rounded-full">
+                <DollarSign className="h-6 w-6 md:h-7 md:w-7 text-primary" />
               </div>
               <div className="flex-1">
-                <h3 className="text-base md:text-lg font-semibold text-foreground mb-1">
-                  Quero pagar na entrega
+                <h3 className="text-lg md:text-xl font-bold text-foreground mb-2">
+                  Quero Pagar na Entrega (Divinópolis-MG)
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  Receba em casa e pague apenas no momento da entrega
+                <p className="text-base font-medium text-muted-foreground mb-3">
+                  Receba em casa e pague somente quando chegar
                 </p>
                 
                 {cepStatus.hasValidCEP ? (
-                  <div className="flex items-center gap-2 mt-2">
-                    <Check className="h-4 w-4 text-green-600" />
-                    <span className="text-xs md:text-sm text-green-600 font-medium">
-                      ✅ Divinópolis - Entrega Disponível
-                    </span>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center gap-2 mt-2">
-                      <MapPin className="h-4 w-4 text-amber-600" />
-                      <span className="text-xs md:text-sm text-amber-600 font-medium">
-                        Verificaremos sua área de entrega
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Check className="h-4 w-4 text-green-600" />
+                      <span className="text-sm font-medium text-green-600">
+                        ✅ Divinópolis - Entrega Disponível
                       </span>
                     </div>
-                    <div className="mt-1">
-                      <Badge variant="outline" className="text-xs">
-                        Apenas Divinópolis-MG
-                      </Badge>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">
+                        Ideal para quem prefere pagar só no recebimento
+                      </span>
                     </div>
-                  </>
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">
+                        Disponível exclusivamente para Divinópolis-MG e região
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <Check className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-muted-foreground">
+                        Nossa equipe entrará em contato para confirmar a área de entrega
+                      </span>
+                    </div>
+                    <div className="flex items-start gap-2">
+                      <MapPin className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-amber-600 font-medium">
+                        Verifique se sua região está disponível
+                      </span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

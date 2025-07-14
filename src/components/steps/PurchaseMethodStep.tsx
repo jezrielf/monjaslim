@@ -100,7 +100,7 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
       source: 'purchase_method_redirect_modal'
     });
     
-    window.open('https://monjaslim.com.br', '_blank');
+    window.open('https://app.monetizze.com.br/checkout/DXM349681', '_blank');
     setShowRedirectModal(false);
   };
 

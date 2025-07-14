@@ -50,7 +50,6 @@ export const useThermalPrint = () => {
           <div class="product-section">
             <div class="section-title">📦 PRODUTO:</div>
             <div class="product-name">${lead.tipo_tratamento || 'N/A'}</div>
-            <div class="price">💰 ${lead.preco_tratamento || 'N/A'}</div>
           </div>
           
           <div class="status-section">
@@ -104,8 +103,8 @@ export const useThermalPrint = () => {
               padding: 3mm;
               border: 1px solid #000;
               background: white;
-              font-size: 9px;
-              line-height: 1.2;
+              font-size: 11px;
+              line-height: 1.3;
               color: #000;
               box-sizing: border-box;
               display: flex;
@@ -115,60 +114,61 @@ export const useThermalPrint = () => {
             
             .header {
               text-align: center;
-              margin-bottom: 8px;
+              margin-bottom: 12px;
               border-bottom: 1px solid #000;
               padding-bottom: 4px;
             }
             
             .title {
               font-weight: bold;
-              font-size: 11px;
+              font-size: 14px;
             }
             
             .customer-info {
-              margin-bottom: 8px;
+              margin-bottom: 12px;
             }
             
             .name {
               font-weight: bold;
-              font-size: 10px;
+              font-size: 13px;
               margin-bottom: 2px;
             }
             
             .phone {
-              font-size: 9px;
+              font-size: 11px;
             }
             
             .address-section, .product-section, .status-section {
-              margin-bottom: 8px;
+              margin-bottom: 12px;
             }
             
             .section-title {
               font-weight: bold;
+              font-size: 12px;
               margin-bottom: 2px;
               border-bottom: 1px dashed #000;
             }
             
-            .address-line, .product-name, .price, .status, .date {
+            .address-line, .product-name, .status, .date {
               margin-bottom: 1px;
               padding-left: 2px;
             }
             
-            .product-name {
-              font-weight: bold;
+            .address-line {
+              font-size: 11px;
             }
             
-            .price {
+            .product-name {
               font-weight: bold;
-              font-size: 10px;
+              font-size: 12px;
             }
             
             .status {
-              font-size: 8px;
+              font-size: 10px;
             }
             
             .date {
-              font-size: 8px;
+              font-size: 10px;
               text-align: right;
             }
           </style>

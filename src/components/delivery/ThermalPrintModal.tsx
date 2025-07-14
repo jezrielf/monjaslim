@@ -55,29 +55,28 @@ export const ThermalPrintModal = ({
               <p><strong>Configuração:</strong> 100x150mm | Impressora Térmica</p>
             </div>
             ${selectedLeads.map(lead => `
-              <div style="border: 2px solid #000; width: 300px; height: 450px; margin: 20px 0; padding: 15px; font-family: monospace; font-size: 12px; background: white;">
-                <div style="text-align: center; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px;">
+              <div style="border: 2px solid #000; width: 350px; height: 500px; margin: 20px 0; padding: 20px; font-family: monospace; font-size: 14px; background: white; line-height: 1.3;">
+                <div style="text-align: center; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 15px; font-size: 16px;">
                   🏷️ PEDIDO MONJASLIM
                 </div>
-                <div style="margin-bottom: 10px;">
-                  <div style="font-weight: bold;">👤 ${lead.nome || 'N/A'}</div>
-                  <div>📞 ${lead.telefone || 'N/A'}</div>
+                <div style="margin-bottom: 15px;">
+                  <div style="font-weight: bold; font-size: 15px;">👤 ${lead.nome || 'N/A'}</div>
+                  <div style="font-size: 13px;">📞 ${lead.telefone || 'N/A'}</div>
                 </div>
-                <div style="margin-bottom: 10px;">
-                  <div style="font-weight: bold; border-bottom: 1px dashed #000;">📍 ENDEREÇO:</div>
-                  <div>${[lead.rua, lead.numero].filter(Boolean).join(', ')}</div>
-                  <div>${[lead.bairro, lead.cidade].filter(Boolean).join(' - ')}</div>
-                  <div>${lead.cep ? `CEP: ${lead.cep}` : ''}</div>
+                <div style="margin-bottom: 15px;">
+                  <div style="font-weight: bold; border-bottom: 1px dashed #000; font-size: 14px;">📍 ENDEREÇO:</div>
+                  <div style="font-size: 13px;">${[lead.rua, lead.numero].filter(Boolean).join(', ')}</div>
+                  <div style="font-size: 13px;">${[lead.bairro, lead.cidade].filter(Boolean).join(' - ')}</div>
+                  <div style="font-size: 13px;">${lead.cep ? `CEP: ${lead.cep}` : ''}</div>
                 </div>
-                <div style="margin-bottom: 10px;">
-                  <div style="font-weight: bold; border-bottom: 1px dashed #000;">📦 PRODUTO:</div>
-                  <div style="font-weight: bold;">${lead.tipo_tratamento || 'N/A'}</div>
-                  <div>💰 ${lead.preco_tratamento || 'N/A'}</div>
+                <div style="margin-bottom: 15px;">
+                  <div style="font-weight: bold; border-bottom: 1px dashed #000; font-size: 14px;">📦 PRODUTO:</div>
+                  <div style="font-weight: bold; font-size: 14px;">${lead.tipo_tratamento || 'N/A'}</div>
                 </div>
                 <div>
-                  <div>✅ Pagamento: ${lead.payment_status === 'paid' ? 'Pago' : lead.payment_status === 'unpaid' ? 'Não Pago' : 'Pendente'}</div>
-                  <div>🚚 Entrega: ${lead.delivery_status === 'delivered' ? 'Entregue' : lead.delivery_status === 'failed' ? 'Falhou' : 'Pendente'}</div>
-                  <div style="text-align: right; margin-top: 5px;">📅 ${new Date(lead.created_at).toLocaleDateString('pt-BR')}</div>
+                  <div style="font-size: 12px;">✅ Pagamento: ${lead.payment_status === 'paid' ? 'Pago' : lead.payment_status === 'unpaid' ? 'Não Pago' : 'Pendente'}</div>
+                  <div style="font-size: 12px;">🚚 Entrega: ${lead.delivery_status === 'delivered' ? 'Entregue' : lead.delivery_status === 'failed' ? 'Falhou' : 'Pendente'}</div>
+                  <div style="text-align: right; margin-top: 5px; font-size: 12px;">📅 ${new Date(lead.created_at).toLocaleDateString('pt-BR')}</div>
                 </div>
               </div>
             `).join('')}
@@ -120,7 +119,7 @@ export const ThermalPrintModal = ({
             <ul className="text-sm space-y-1 text-blue-700">
               <li>• Nome e telefone do cliente</li>
               <li>• Endereço completo de entrega</li>
-              <li>• Produto e valor</li>
+              <li>• Produto selecionado</li>
               <li>• Status de pagamento e entrega</li>
               <li>• Data do pedido</li>
             </ul>

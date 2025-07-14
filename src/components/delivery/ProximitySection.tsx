@@ -43,10 +43,7 @@ export const ProximitySection = ({
       <div className="flex items-center gap-3 mb-4 p-4 bg-muted/50 rounded-lg border-l-4 border-l-primary">
         {onSelectLead && (
           <Checkbox
-            checked={allSelected}
-            ref={(el) => {
-              if (el) el.indeterminate = someSelected && !allSelected;
-            }}
+            checked={someSelected && !allSelected ? "indeterminate" : allSelected}
             onCheckedChange={handleSelectAll}
           />
         )}

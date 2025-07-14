@@ -146,6 +146,20 @@ export const clearTrackingData = (): void => {
   });
 };
 
+// Form data backup functions
+export const saveFormDataBackup = (formData: any): void => {
+  localStorage.setItem('form_data_backup', JSON.stringify(formData));
+};
+
+export const getFormDataBackup = (): any => {
+  const data = localStorage.getItem('form_data_backup');
+  return data ? JSON.parse(data) : null;
+};
+
+export const clearFormDataBackup = (): void => {
+  localStorage.removeItem('form_data_backup');
+};
+
 // Debug: Get all tracking data
 export const getFullTrackingData = () => {
   return {

@@ -150,6 +150,21 @@ export const FormWizard: React.FC = () => {
   };
 
   const handleSubmit = async () => {
+    if (isSubmitting) return;
+    
+    // Validação antes da submissão
+    if (!formData.tipoTratamento || !formData.precoTratamento) {
+      toast({
+        title: "Erro",
+        description: "Dados do tratamento ausentes. Por favor, selecione um tratamento.",
+        variant: "destructive",
+      });
+      
+      // Redirecionar para step do tratamento
+      setCurrentStep(3);
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       // Track form submission

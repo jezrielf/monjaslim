@@ -108,22 +108,30 @@ export const FormNotificationEmail = ({
           </>
         )}
 
-        {utmData && Object.keys(utmData).length > 0 && (
-          <>
-            <Hr style={hr} />
-            <Section style={section}>
-              <Heading style={h2}>📊 Dados de Tracking</Heading>
-              <Text style={text}>
-                {utmData.utm_source && <><strong>Fonte:</strong> {utmData.utm_source}<br/></>}
+        <Hr style={hr} />
+        <Section style={section}>
+          <Heading style={h2}>📊 Dados de Origem</Heading>
+          <Text style={text}>
+            {utmData?.utm_source ? (
+              <>
+                <strong>Fonte:</strong> {utmData.utm_source}<br/>
                 {utmData.utm_medium && <><strong>Mídia:</strong> {utmData.utm_medium}<br/></>}
                 {utmData.utm_campaign && <><strong>Campanha:</strong> {utmData.utm_campaign}<br/></>}
                 {utmData.utm_content && <><strong>Conteúdo:</strong> {utmData.utm_content}<br/></>}
                 {utmData.utm_term && <><strong>Termo:</strong> {utmData.utm_term}<br/></>}
                 {utmData.fbclid && <><strong>Facebook Click ID:</strong> {utmData.fbclid}<br/></>}
-              </Text>
-            </Section>
-          </>
-        )}
+              </>
+            ) : (
+              <>
+                <strong>⚠️ Origem não identificada via UTMs</strong><br/>
+                {utmData?.referrer && <><strong>Referrer:</strong> {utmData.referrer}<br/></>}
+                {utmData?.user_agent && <><strong>User Agent:</strong> {utmData.user_agent.substring(0, 100)}...<br/></>}
+                <strong>Status:</strong> <span style={{color: '#e74c3c'}}>UTMs não capturadas - verificar campanhas!</span><br/>
+              </>
+            )}
+            {utmData?.session_id && <><strong>Sessão:</strong> {utmData.session_id}<br/></>}
+          </Text>
+        </Section>
 
       </Container>
     </Body>

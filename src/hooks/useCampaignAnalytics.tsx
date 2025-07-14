@@ -37,7 +37,7 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
       // Campaign performance query
       const { data: campaignData, error: campaignError } = await supabase
         .from("leads")
-        .select("utm_source, utm_campaign, utm_medium, utm_content, utm_term, aceite_final, total_time_seconds")
+        .select("utm_source, utm_campaign, utm_medium, utm_content, utm_term, aceite_final, total_time_seconds, referrer")
         .gte("created_at", fromDate)
         .lte("created_at", toDate);
 
@@ -69,8 +69,10 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
       campaignData?.forEach((lead) => {
         // Check if this is Facebook traffic (novo formato: utm_source=FB)
         const isFacebookLead = lead.utm_source === 'FB' || lead.utm_source === 'facebook';
+        const isInstagramLead = lead.utm_source === 'instagram';
+        const isSocialLead = isFacebookLead || isInstagramLead;
         
-        if (isFacebookLead) {
+        if (isSocialLead) {
           // Handle Facebook campaigns separately for better grouping (novo formato com nome|id)
           const campaignName = lead.utm_campaign?.split('|')[0] || 'Sem_Campanha';
           const adsetName = lead.utm_medium?.split('|')[0] || 'Sem_Adset';
@@ -80,7 +82,7 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
           const fbKey = `${campaignName}-${adsetName}-${adName}-${placement}`;
           if (!facebookCampaigns.has(fbKey)) {
             facebookCampaigns.set(fbKey, {
-              utm_source: 'Facebook',
+              utm_source: isInstagramLead ? 'Instagram' : 'Facebook',
               utm_campaign: campaignName,
               utm_medium: adsetName, // Novo: agora mostra o adset
               utm_content: adName,
@@ -88,6 +90,8 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
               campaign_id: lead.utm_campaign?.split('|')[1] || null,
               adset_id: lead.utm_medium?.split('|')[1] || null,
               ad_id: lead.utm_content?.split('|')[1] || null,
+              has_referrer: lead.referrer ? true : false,
+              original_source: lead.utm_source,
               total_leads: 0,
               conversions: 0,
               total_time: 0,
@@ -98,14 +102,33 @@ export const useCampaignAnalytics = (dateRange: { from: Date; to: Date }) => {
           if (lead.aceite_final) fbCampaign.conversions++;
           if (lead.total_time_seconds) fbCampaign.total_time += lead.total_time_seconds;
         } else {
-          // Handle other sources
-          const key = `${lead.utm_source || 'Direto'}-${lead.utm_campaign || 'Sem_Campanha'}-${lead.utm_content || 'Sem_Conteudo'}-${lead.utm_term || 'Sem_Termo'}`;
+          // Handle other sources with better classification
+          let sourceLabel = lead.utm_source || 'Não Identificado';
+          
+          // Improve source labeling based on referrer
+          if (!lead.utm_source && lead.referrer) {
+            if (lead.referrer.includes('monjaslim.site')) {
+              sourceLabel = 'Site Oficial';
+            } else if (lead.referrer.includes('facebook.com')) {
+              sourceLabel = 'Facebook (sem UTM)';
+            } else if (lead.referrer.includes('instagram.com')) {
+              sourceLabel = 'Instagram (sem UTM)';
+            } else {
+              sourceLabel = 'Referral';
+            }
+          } else if (!lead.utm_source && !lead.referrer) {
+            sourceLabel = 'Tráfego Direto';
+          }
+          
+          const key = `${sourceLabel}-${lead.utm_campaign || 'Sem_Campanha'}-${lead.utm_content || 'Sem_Conteudo'}-${lead.utm_term || 'Sem_Termo'}`;
           if (!campaignMap.has(key)) {
             campaignMap.set(key, {
-              utm_source: lead.utm_source || 'Direto',
+              utm_source: sourceLabel,
               utm_campaign: lead.utm_campaign || 'Sem Campanha',
               utm_content: lead.utm_content || 'Sem Conteúdo',
               utm_term: lead.utm_term || 'Sem Termo',
+              has_referrer: lead.referrer ? true : false,
+              referrer_domain: lead.referrer ? new URL(lead.referrer).hostname : null,
               total_leads: 0,
               conversions: 0,
               total_time: 0,

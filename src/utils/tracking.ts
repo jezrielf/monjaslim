@@ -5,11 +5,52 @@ export const generateSessionId = (): string => {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Extract UTM parameters from URL
+// Detect traffic source from user agent and referrer
+export const detectTrafficSource = (): { source: string; medium: string; isSocial: boolean } => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  const referrer = document.referrer.toLowerCase();
+
+  // Facebook/Instagram detection via user agent
+  if (userAgent.includes('fban') || userAgent.includes('fbav')) {
+    return { source: 'facebook', medium: 'mobile_app', isSocial: true };
+  }
+  
+  if (userAgent.includes('instagram')) {
+    return { source: 'instagram', medium: 'mobile_app', isSocial: true };
+  }
+
+  // Facebook/Instagram detection via referrer
+  if (referrer.includes('facebook.com') || referrer.includes('m.facebook.com')) {
+    return { source: 'facebook', medium: 'referral', isSocial: true };
+  }
+  
+  if (referrer.includes('instagram.com')) {
+    return { source: 'instagram', medium: 'referral', isSocial: true };
+  }
+
+  // Other social platforms
+  if (referrer.includes('t.co') || referrer.includes('twitter.com')) {
+    return { source: 'twitter', medium: 'referral', isSocial: true };
+  }
+
+  // Official site detection
+  if (referrer.includes('monjaslim.site')) {
+    return { source: 'site_oficial', medium: 'referral', isSocial: false };
+  }
+
+  // Direct or other
+  if (!referrer) {
+    return { source: 'direct', medium: 'none', isSocial: false };
+  }
+
+  return { source: 'referral', medium: 'website', isSocial: false };
+};
+
+// Extract UTM parameters from URL with fallback detection
 export const extractUTMParams = (): UTMParams => {
   const urlParams = new URLSearchParams(window.location.search);
   
-  const utmParams = {
+  let utmParams = {
     utm_source: urlParams.get('utm_source') || '',
     utm_medium: urlParams.get('utm_medium') || '',
     utm_campaign: urlParams.get('utm_campaign') || '',
@@ -19,12 +60,31 @@ export const extractUTMParams = (): UTMParams => {
     fb_source: urlParams.get('fb_source') || '',
   };
 
+  // If no UTMs found, apply fallback detection
+  const hasAnyUTM = Object.values(utmParams).some(value => value !== '');
+  
+  if (!hasAnyUTM) {
+    const detected = detectTrafficSource();
+    console.log('🔍 Fallback detection applied:', detected);
+    
+    utmParams = {
+      ...utmParams,
+      utm_source: detected.source,
+      utm_medium: detected.medium,
+      fb_source: detected.isSocial ? 'social_fallback' : '',
+    };
+  }
+
   // Enhanced debugging for Facebook UTMs
   console.log('🎯 Facebook UTM Extraction:', {
     url: window.location.href,
     searchParams: window.location.search,
+    referrer: document.referrer,
+    userAgent: navigator.userAgent,
     extractedUTMs: utmParams,
-    isFacebookTraffic: utmParams.utm_source === 'facebook'
+    hasFBUTMs: utmParams.utm_source === 'FB' || utmParams.utm_source === 'facebook',
+    fbclid: utmParams.fbclid,
+    detectedSocial: detectTrafficSource()
   });
 
   return utmParams;

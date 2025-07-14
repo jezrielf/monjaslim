@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { getFullTrackingData, extractUTMParams, createTrackingData } from "@/utils/tracking";
+import { getFullTrackingData, extractUTMParams, createTrackingData, detectTrafficSource } from "@/utils/tracking";
 import { useToast } from "@/hooks/use-toast";
 import { useUTMDiagnostics } from "@/hooks/useUTMDiagnostics";
 
@@ -115,6 +115,24 @@ export const UTMDebugPanel = () => {
               <p>ID: {currentData.tracking_data?.session_id?.slice(-8) || 'N/A'}</p>
               <p>Tempo: {currentData.total_session_time}</p>
               <p>Eventos: {currentData.funnel_events?.length || 0}</p>
+              <p>Referrer: {document.referrer || 'Direto'}</p>
+            </div>
+          </div>
+
+          {/* Traffic Detection */}
+          <div>
+            <Label className="text-xs font-semibold">Detecção de Tráfego</Label>
+            <div className="text-xs space-y-1">
+              {(() => {
+                const detected = detectTrafficSource();
+                return (
+                  <>
+                    <p>Fonte: {detected.source}</p>
+                    <p>Meio: {detected.medium}</p>
+                    <p>Social: {detected.isSocial ? 'Sim' : 'Não'}</p>
+                  </>
+                );
+              })()}
             </div>
           </div>
 

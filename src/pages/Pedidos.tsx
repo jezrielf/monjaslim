@@ -1,13 +1,15 @@
 
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { useDeliveryManagement } from "@/hooks/useDeliveryManagement";
 import { DeliveryCard } from "@/components/delivery/DeliveryCard";
 import { DeliveryFilters } from "@/components/delivery/DeliveryFilters";
 import { ProximitySection } from "@/components/delivery/ProximitySection";
 import { StatusUpdateModal } from "@/components/delivery/StatusUpdateModal";
+import { ThermalPrintModal } from "@/components/delivery/ThermalPrintModal";
 import { Navigation } from "@/components/Navigation";
-import { Loader } from "lucide-react";
+import { Loader, CheckSquare, Square, Printer } from "lucide-react";
 
 export default function Pedidos() {
   const [filters, setFilters] = useState({
@@ -20,6 +22,10 @@ export default function Pedidos() {
   
   const [selectedLead, setSelectedLead] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  
+  // Estados para seleção múltipla e impressão
+  const [selectedLeads, setSelectedLeads] = useState<string[]>([]);
+  const [printModalOpen, setPrintModalOpen] = useState(false);
 
   const { leads, loading, updateLeadStatus, groupedLeads } = useDeliveryManagement(filters);
 
@@ -44,6 +50,31 @@ export default function Pedidos() {
       setSelectedLead(lead);
       setModalOpen(true);
     }
+  };
+
+  // Funções para seleção múltipla
+  const handleSelectLead = (leadId: string, selected: boolean) => {
+    if (selected) {
+      setSelectedLeads([...selectedLeads, leadId]);
+    } else {
+      setSelectedLeads(selectedLeads.filter(id => id !== leadId));
+    }
+  };
+
+  const handleSelectAll = () => {
+    if (selectedLeads.length === leads.length) {
+      setSelectedLeads([]);
+    } else {
+      setSelectedLeads(leads.map(lead => lead.id));
+    }
+  };
+
+  const getSelectedLeadsData = () => {
+    return leads.filter(lead => selectedLeads.includes(lead.id));
+  };
+
+  const handlePrint = () => {
+    setSelectedLeads([]);
   };
 
   const renderContent = () => {
@@ -82,6 +113,8 @@ export default function Pedidos() {
                 leads={neighborhoodLeads}
                 sectionOrder={sectionOrder++}
                 onAction={handleCardAction}
+                selectedLeads={selectedLeads}
+                onSelectLead={handleSelectLead}
               />
             ))
           )}
@@ -97,6 +130,8 @@ export default function Pedidos() {
             key={lead.id}
             lead={lead}
             onAction={handleCardAction}
+            selected={selectedLeads.includes(lead.id)}
+            onSelect={(selected) => handleSelectLead(lead.id, selected)}
           />
         ))}
       </div>
@@ -123,6 +158,40 @@ export default function Pedidos() {
             </p>
           </div>
 
+          {/* Botões de seleção e impressão */}
+          {leads.length > 0 && (
+            <div className="flex items-center gap-4 mb-6 p-4 bg-muted/30 rounded-lg border">
+              <Button 
+                variant="outline" 
+                onClick={handleSelectAll}
+                className="flex items-center gap-2"
+              >
+                {selectedLeads.length === leads.length ? (
+                  <CheckSquare className="h-4 w-4" />
+                ) : (
+                  <Square className="h-4 w-4" />
+                )}
+                {selectedLeads.length === leads.length ? 'Desmarcar Todos' : 'Selecionar Todos'}
+              </Button>
+              
+              {selectedLeads.length > 0 && (
+                <>
+                  <div className="text-sm text-muted-foreground">
+                    {selectedLeads.length} de {leads.length} pedidos selecionados
+                  </div>
+                  
+                  <Button 
+                    onClick={() => setPrintModalOpen(true)}
+                    className="bg-blue-600 hover:bg-blue-700 ml-auto"
+                  >
+                    <Printer className="h-4 w-4 mr-2" />
+                    Imprimir Etiquetas ({selectedLeads.length})
+                  </Button>
+                </>
+              )}
+            </div>
+          )}
+
           {/* Filters */}
           <DeliveryFilters 
             filters={filters}
@@ -138,6 +207,14 @@ export default function Pedidos() {
             open={modalOpen}
             onOpenChange={setModalOpen}
             onUpdate={handleStatusUpdate}
+          />
+
+          {/* Thermal Print Modal */}
+          <ThermalPrintModal
+            open={printModalOpen}
+            onOpenChange={setPrintModalOpen}
+            selectedLeads={getSelectedLeadsData()}
+            onPrint={handlePrint}
           />
         </div>
       </div>

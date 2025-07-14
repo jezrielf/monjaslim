@@ -1,6 +1,8 @@
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   CheckCircle, 
   XCircle, 
@@ -18,9 +20,11 @@ import { format } from "date-fns";
 interface DeliveryCardProps {
   lead: any;
   onAction: (lead: any, action: 'paid' | 'unpaid' | 'details') => void;
+  selected?: boolean;
+  onSelect?: (selected: boolean) => void;
 }
 
-export const DeliveryCard = ({ lead, onAction }: DeliveryCardProps) => {
+export const DeliveryCard = ({ lead, onAction, selected = false, onSelect }: DeliveryCardProps) => {
   const getPaymentStatusBadge = (status: string) => {
     switch (status) {
       case 'paid':
@@ -49,14 +53,25 @@ export const DeliveryCard = ({ lead, onAction }: DeliveryCardProps) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary">
+    <Card className={`hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary ${
+      selected ? 'ring-2 ring-primary bg-primary/5' : ''
+    }`}>
       <CardHeader className="pb-4">
         <div className="flex items-start justify-between">
-          <div className="space-y-2">
-            <h3 className="text-xl font-semibold text-foreground">{lead.nome}</h3>
-            <div className="flex gap-2">
-              {getPaymentStatusBadge(lead.payment_status)}
-              {getDeliveryStatusBadge(lead.delivery_status)}
+          <div className="flex items-start gap-3">
+            {onSelect && (
+              <Checkbox
+                checked={selected}
+                onCheckedChange={onSelect}
+                className="mt-1"
+              />
+            )}
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-foreground">{lead.nome}</h3>
+              <div className="flex gap-2">
+                {getPaymentStatusBadge(lead.payment_status)}
+                {getDeliveryStatusBadge(lead.delivery_status)}
+              </div>
             </div>
           </div>
           <div className="text-right text-sm text-muted-foreground">

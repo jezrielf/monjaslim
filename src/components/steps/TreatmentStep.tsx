@@ -71,19 +71,25 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
     const treatment = treatments.find(t => t.id === treatmentId);
     if (treatment) {
       setSelectedTreatment(treatmentId);
-      console.log('Updating treatment data:', { tipoTratamento: treatmentId, precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix` });
-      updateData({
+      const treatmentData = {
         tipoTratamento: treatmentId,
         precoTratamento: `${treatment.installments} ou ${treatment.pixPrice} no Pix`,
-      });
+      };
+      
+      console.log('Updating treatment data:', treatmentData);
+      // Garantir que dados sejam atualizados primeiro
+      updateData(treatmentData);
       setError('');
       
-      // Track treatment selection
-      trackFunnelEvent('treatment_selection_made', 3, {
-        selected_treatment: treatmentId,
-        treatment_name: treatment.name,
-        treatment_price: treatment.pixPrice
-      });
+      // Aguardar antes do tracking para garantir que dados foram salvos
+      setTimeout(() => {
+        trackFunnelEvent('treatment_selection_made', 3, {
+          selected_treatment: treatmentId,
+          treatment_name: treatment.name,
+          treatment_price: treatment.pixPrice,
+          form_data_updated: treatmentData
+        });
+      }, 100);
 
       // Show focus animation and scroll to next button
       setShowNextFocus(true);

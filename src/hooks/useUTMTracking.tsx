@@ -66,7 +66,14 @@ export const useStepTracking = (currentStep: number, formData?: any) => {
 
       const eventType = eventMap[currentStep];
       if (eventType) {
-        trackFunnelEvent(eventType as any, currentStep, formData);
+        // Para step 3 (tratamento), aguardar um pouco para garantir que os dados foram atualizados
+        if (currentStep === 3) {
+          setTimeout(() => {
+            trackFunnelEvent(eventType as any, currentStep, formData);
+          }, 150);
+        } else {
+          trackFunnelEvent(eventType as any, currentStep, formData);
+        }
       }
 
       previousStep.current = currentStep;

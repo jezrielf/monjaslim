@@ -1,8 +1,10 @@
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Calendar } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Search, Filter, Calendar, MapPin, Building } from "lucide-react";
 
 interface DeliveryFiltersProps {
   filters: {
@@ -10,6 +12,7 @@ interface DeliveryFiltersProps {
     deliveryStatus: string;
     searchTerm: string;
     dateRange: { from: Date | null; to: Date | null };
+    sortBy: 'recent' | 'proximity' | 'city';
   };
   onFiltersChange: (filters: any) => void;
 }
@@ -27,7 +30,8 @@ export const DeliveryFilters = ({ filters, onFiltersChange }: DeliveryFiltersPro
       paymentStatus: 'all',
       deliveryStatus: 'all',
       searchTerm: '',
-      dateRange: { from: null, to: null }
+      dateRange: { from: null, to: null },
+      sortBy: 'recent'
     });
   };
 
@@ -37,8 +41,19 @@ export const DeliveryFilters = ({ filters, onFiltersChange }: DeliveryFiltersPro
     if (filters.deliveryStatus !== 'all') count++;
     if (filters.searchTerm) count++;
     if (filters.dateRange.from || filters.dateRange.to) count++;
+    if (filters.sortBy !== 'recent') count++;
     return count;
   };
+
+  const getSortIcon = () => {
+    switch (filters.sortBy) {
+      case 'proximity': return MapPin;
+      case 'city': return Building;
+      default: return Calendar;
+    }
+  };
+
+  const SortIcon = getSortIcon();
 
   return (
     <Card className="mb-6">
@@ -55,8 +70,7 @@ export const DeliveryFilters = ({ filters, onFiltersChange }: DeliveryFiltersPro
             />
           </div>
 
-          {/* Status Filters */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Payment Status */}
             <div>
               <label className="text-sm font-medium mb-2 block">Status de Pagamento</label>
@@ -102,6 +116,39 @@ export const DeliveryFilters = ({ filters, onFiltersChange }: DeliveryFiltersPro
                 ))}
               </div>
             </div>
+
+            {/* Sort By */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Ordenação</label>
+              <Select value={filters.sortBy} onValueChange={(value) => updateFilter('sortBy', value)}>
+                <SelectTrigger className="w-full">
+                  <div className="flex items-center gap-2">
+                    <SortIcon className="h-4 w-4" />
+                    <SelectValue />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recent">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>Mais Recentes</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="proximity">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4" />
+                      <span>Por Proximidade</span>
+                    </div>
+                  </SelectItem>
+                  <SelectItem value="city">
+                    <div className="flex items-center gap-2">
+                      <Building className="h-4 w-4" />
+                      <span>Por Cidade</span>
+                    </div>
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           {/* Filter Summary */}
@@ -111,6 +158,12 @@ export const DeliveryFilters = ({ filters, onFiltersChange }: DeliveryFiltersPro
               <span className="text-sm text-muted-foreground">
                 {getActiveFiltersCount()} filtro(s) ativo(s)
               </span>
+              {filters.sortBy !== 'recent' && (
+                <Badge variant="secondary" className="ml-2">
+                  <SortIcon className="h-3 w-3 mr-1" />
+                  {filters.sortBy === 'proximity' ? 'Proximidade' : 'Cidade'}
+                </Badge>
+              )}
             </div>
             
             {getActiveFiltersCount() > 0 && (

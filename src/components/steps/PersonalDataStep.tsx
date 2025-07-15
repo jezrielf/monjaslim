@@ -153,7 +153,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
       </div>
 
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="cep">CEP *</Label>
           <div className="relative">
@@ -192,7 +192,9 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
             <p className="text-sm text-destructive">{errors.numero}</p>
           )}
         </div>
+      </div>
 
+      <div className="grid grid-cols-2 gap-3 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="complemento">Complemento</Label>
           <Input
@@ -202,9 +204,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
             placeholder="Apto 101"
           />
         </div>
-      </div>
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="rua">Rua</Label>
           <Input
@@ -215,7 +215,9 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
             disabled={isLoadingCep}
           />
         </div>
+      </div>
 
+      <div className="grid grid-cols-2 gap-3 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="bairro">Bairro</Label>
           <Input

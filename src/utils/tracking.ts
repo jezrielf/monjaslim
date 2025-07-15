@@ -1,4 +1,3 @@
-
 import { UTMParams, TrackingData, FunnelEvent, FunnelEventType } from '@/types/tracking';
 
 // Generate unique session ID
@@ -6,75 +5,13 @@ export const generateSessionId = (): string => {
   return `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
-// Parse URL parameters including hash parameters (for SPAs)
-const getAllUrlParams = (): URLSearchParams => {
-  // First, check if this is a Facebook redirect URL
-  const currentUrl = window.location.href;
-  const urlParams = new URLSearchParams(window.location.search);
-  
-  // Check for Facebook's encoded URL parameter
-  const encodedUrl = urlParams.get('u');
-  if (encodedUrl) {
-    try {
-      // Decode the Facebook URL
-      const decodedUrl = decodeURIComponent(encodedUrl);
-      console.log('🔍 Facebook encoded URL detected:', decodedUrl);
-      
-      // Parse the decoded URL
-      const url = new URL(decodedUrl);
-      const decodedParams = new URLSearchParams(url.search);
-      
-      // Extract fbclid from the decoded URL
-      const fbclid = decodedParams.get('fbclid');
-      if (fbclid) {
-        // Add fbclid to current params
-        urlParams.set('fbclid', fbclid);
-        
-        // Also set default Facebook UTMs if not present
-        if (!urlParams.get('utm_source')) {
-          urlParams.set('utm_source', 'facebook');
-          urlParams.set('utm_medium', 'social');
-        }
-      }
-      
-      // Merge any other parameters from the decoded URL
-      decodedParams.forEach((value, key) => {
-        if (!urlParams.has(key) && key !== 'fbclid') {
-          urlParams.set(key, value);
-        }
-      });
-    } catch (error) {
-      console.error('Error decoding Facebook URL:', error);
-    }
-  }
-  
-  // Also check hash parameters (common in SPAs)
-  if (window.location.hash.includes('?')) {
-    const hashParams = new URLSearchParams(window.location.hash.split('?')[1]);
-    // Merge hash params into query params
-    hashParams.forEach((value, key) => {
-      if (!urlParams.has(key)) {
-        urlParams.set(key, value);
-      }
-    });
-  }
-  
-  return urlParams;
-};
-
 // Detect traffic source from user agent and referrer
 export const detectTrafficSource = (): { source: string; medium: string; isSocial: boolean } => {
   const userAgent = navigator.userAgent.toLowerCase();
   const referrer = document.referrer.toLowerCase();
-  const currentUrl = window.location.href.toLowerCase();
-
-  // Check if URL contains Facebook redirect patterns
-  if (currentUrl.includes('fbclid') || currentUrl.includes('facebook.com') || currentUrl.includes('fb.com')) {
-    return { source: 'facebook', medium: 'paid_social', isSocial: true };
-  }
 
   // Facebook/Instagram detection via user agent
-  if (userAgent.includes('fban') || userAgent.includes('fbav') || userAgent.includes('fb_iab')) {
+  if (userAgent.includes('fban') || userAgent.includes('fbav')) {
     return { source: 'facebook', medium: 'mobile_app', isSocial: true };
   }
   
@@ -83,25 +20,17 @@ export const detectTrafficSource = (): { source: string; medium: string; isSocia
   }
 
   // Facebook/Instagram detection via referrer
-  if (referrer.includes('facebook.com') || referrer.includes('m.facebook.com') || referrer.includes('fb.com')) {
+  if (referrer.includes('facebook.com') || referrer.includes('m.facebook.com')) {
     return { source: 'facebook', medium: 'referral', isSocial: true };
   }
   
-  if (referrer.includes('instagram.com') || referrer.includes('l.instagram.com')) {
+  if (referrer.includes('instagram.com')) {
     return { source: 'instagram', medium: 'referral', isSocial: true };
   }
 
   // Other social platforms
-  if (referrer.includes('t.co') || referrer.includes('twitter.com') || referrer.includes('x.com')) {
+  if (referrer.includes('t.co') || referrer.includes('twitter.com')) {
     return { source: 'twitter', medium: 'referral', isSocial: true };
-  }
-
-  if (referrer.includes('linkedin.com')) {
-    return { source: 'linkedin', medium: 'referral', isSocial: true };
-  }
-
-  if (referrer.includes('youtube.com')) {
-    return { source: 'youtube', medium: 'referral', isSocial: true };
   }
 
   // Official site detection
@@ -117,127 +46,56 @@ export const detectTrafficSource = (): { source: string; medium: string; isSocia
   return { source: 'referral', medium: 'website', isSocial: false };
 };
 
-// Extract UTM parameters from URL with enhanced fallback detection
+// Extract UTM parameters from URL with fallback detection
 export const extractUTMParams = (): UTMParams => {
-  const urlParams = getAllUrlParams();
+  const urlParams = new URLSearchParams(window.location.search);
   
-  // Define all possible UTM parameter variations
-  const paramVariations = {
-    utm_source: ['utm_source', 'source', 'ref'],
-    utm_medium: ['utm_medium', 'medium'],
-    utm_campaign: ['utm_campaign', 'campaign'],
-    utm_content: ['utm_content', 'content', 'ad'],
-    utm_term: ['utm_term', 'term', 'keyword'],
-  };
-  
-  // Helper function to get parameter value from variations
-  const getParamValue = (variations: string[]): string => {
-    for (const variant of variations) {
-      const value = urlParams.get(variant);
-      if (value && value !== 'null' && value !== 'undefined') {
-        return value;
-      }
-    }
-    return '';
-  };
-  
-  // Extract UTM parameters with variations
-  let utmParams: UTMParams = {
-    utm_source: getParamValue(paramVariations.utm_source),
-    utm_medium: getParamValue(paramVariations.utm_medium),
-    utm_campaign: getParamValue(paramVariations.utm_campaign),
-    utm_content: getParamValue(paramVariations.utm_content),
-    utm_term: getParamValue(paramVariations.utm_term),
+  let utmParams = {
+    utm_source: urlParams.get('utm_source') || '',
+    utm_medium: urlParams.get('utm_medium') || '',
+    utm_campaign: urlParams.get('utm_campaign') || '',
+    utm_content: urlParams.get('utm_content') || '',
+    utm_term: urlParams.get('utm_term') || '',
     fbclid: urlParams.get('fbclid') || '',
     fb_source: urlParams.get('fb_source') || '',
   };
 
-  // Check if UTM params exist but are empty (common pattern from Facebook)
-  const hasEmptyUTMs = window.location.search.includes('utm_source=&') || 
-                       window.location.search.includes('utm_source=');
-  
-  // Check for stored Facebook redirect data first
-  const storedFacebookData = checkStoredFacebookData();
-  if (storedFacebookData) {
-    console.log('📦 Using stored Facebook redirect data:', storedFacebookData);
-    utmParams = { ...utmParams, ...storedFacebookData };
-  }
-  
-  // Check if we have any actual UTM parameters with values
-  const hasValidUTM = Boolean(
-    (utmParams.utm_source && utmParams.utm_source !== '') || 
-    (utmParams.utm_medium && utmParams.utm_medium !== '') || 
-    (utmParams.utm_campaign && utmParams.utm_campaign !== '') || 
-    (utmParams.utm_content && utmParams.utm_content !== '') || 
-    (utmParams.utm_term && utmParams.utm_term !== '') ||
+  // Check if we have any actual UTM parameters from URL
+  const hasAnyUTM = Boolean(
+    utmParams.utm_source || 
+    utmParams.utm_medium || 
+    utmParams.utm_campaign || 
+    utmParams.utm_content || 
+    utmParams.utm_term ||
     utmParams.fbclid
   );
   
-  console.log('🔍 UTM Check:', { 
-    hasValidUTM, 
-    hasEmptyUTMs,
-    urlParams: Object.fromEntries(urlParams),
-    rawQueryString: window.location.search 
-  });
+  console.log('🔍 UTM Check:', { hasAnyUTM, urlParams: Object.fromEntries(urlParams) });
   
-  // If we have fbclid but no UTMs, it's likely from Facebook
-  if (utmParams.fbclid && !hasValidUTM) {
-    const detected = detectTrafficSource();
-    console.log('🔍 Facebook click detected without UTMs, applying detection:', detected);
-    
-    utmParams.utm_source = 'facebook';
-    utmParams.utm_medium = 'paid_social';
-    utmParams.fb_source = 'facebook_ads';
-  }
-  // If UTMs exist but are empty, or no valid UTMs found, apply fallback
-  else if (hasEmptyUTMs || !hasValidUTM) {
+  // If no UTMs found, apply fallback detection
+  if (!hasAnyUTM) {
     const detected = detectTrafficSource();
     console.log('🔍 Applying fallback detection:', detected);
     
-    // Apply fallback values only for empty fields
-    utmParams.utm_source = utmParams.utm_source || detected.source;
-    utmParams.utm_medium = utmParams.utm_medium || detected.medium;
+    // Apply fallback values
+    utmParams.utm_source = detected.source;
+    utmParams.utm_medium = detected.medium;
     utmParams.fb_source = detected.isSocial ? 'social_fallback' : '';
     
     console.log('🎯 Fallback UTMs applied:', utmParams);
-  }
-
-  // Try to persist UTMs from session storage if current ones are empty
-  const storedUTMs = getStoredUTMs();
-  if (storedUTMs && !hasValidUTM) {
-    console.log('📦 Using stored UTMs from previous page:', storedUTMs);
-    utmParams = { ...storedUTMs };
-  } else if (hasValidUTM) {
-    // Store valid UTMs for future use
-    storeUTMs(utmParams);
   }
 
   // Enhanced debugging for UTM tracking
   console.log('🎯 UTM Extraction Final Result:', {
     url: window.location.href,
     searchParams: window.location.search,
-    hash: window.location.hash,
     referrer: document.referrer,
-    userAgent: navigator.userAgent,
-    hasOriginalUTMs: hasValidUTM,
-    hasEmptyUTMs,
-    hasEncodedUrl: urlParams.has('u'),
+    hasOriginalUTMs: hasAnyUTM,
     extractedUTMs: utmParams,
     detectionSource: detectTrafficSource()
   });
 
   return utmParams;
-};
-
-// Store UTMs in session storage for persistence across page navigation
-const storeUTMs = (utms: UTMParams): void => {
-  sessionStorage.setItem('stored_utm_params', JSON.stringify(utms));
-};
-
-// Get stored UTMs from session storage
-const getStoredUTMs = (): UTMParams | null => {
-  const stored = sessionStorage.getItem('stored_utm_params');
-  return stored ? JSON.parse(stored) : null;
 };
 
 // Create initial tracking data
@@ -354,7 +212,6 @@ export const clearTrackingData = (): void => {
   Object.values(STORAGE_KEYS).forEach(key => {
     localStorage.removeItem(key);
   });
-  sessionStorage.removeItem('stored_utm_params');
 };
 
 // Form data backup functions
@@ -377,9 +234,6 @@ export const getFullTrackingData = () => {
     tracking_data: getTrackingData(),
     funnel_events: getFunnelEvents(),
     total_session_time: getTotalSessionTime(),
-    stored_utms: getStoredUTMs(),
-    current_url: window.location.href,
-    referrer: document.referrer,
   };
 };
 
@@ -401,74 +255,4 @@ export const formatTrackingForSubmission = (leadData: any, finalAction: 'redirec
       conversion_value: leadData.precoTratamento || '',
     },
   };
-};
-
-// Manual UTM override function (useful for testing)
-export const overrideUTMParams = (params: Partial<UTMParams>): void => {
-  const currentData = getTrackingData();
-  if (currentData) {
-    const updatedData = {
-      ...currentData,
-      ...params,
-    };
-    saveTrackingData(updatedData);
-    storeUTMs(updatedData);
-    console.log('🔧 UTM params manually overridden:', params);
-  }
-};
-
-// Function to handle Facebook redirect URLs
-export const processFacebookRedirect = (): boolean => {
-  const urlParams = new URLSearchParams(window.location.search);
-  const encodedUrl = urlParams.get('u');
-  
-  if (encodedUrl) {
-    try {
-      // Decode and redirect to the actual URL
-      const decodedUrl = decodeURIComponent(encodedUrl);
-      console.log('🔄 Processing Facebook redirect to:', decodedUrl);
-      
-      // Extract parameters before redirect
-      const url = new URL(decodedUrl);
-      const fbclid = url.searchParams.get('fbclid');
-      
-      // Store Facebook tracking info before redirect
-      if (fbclid) {
-        const fbTrackingData = {
-          utm_source: 'facebook',
-          utm_medium: 'paid_social',
-          utm_campaign: urlParams.get('utm_campaign') || 'facebook_ads',
-          fbclid: fbclid,
-          fb_source: 'facebook_redirect',
-        };
-        
-        // Store in session storage to persist after redirect
-        sessionStorage.setItem('fb_redirect_tracking', JSON.stringify(fbTrackingData));
-      }
-      
-      // Redirect to the decoded URL
-      window.location.href = decodedUrl;
-      return true;
-    } catch (error) {
-      console.error('Error processing Facebook redirect:', error);
-    }
-  }
-  
-  return false;
-};
-
-// Check for stored Facebook redirect data
-const checkStoredFacebookData = (): Partial<UTMParams> | null => {
-  const stored = sessionStorage.getItem('fb_redirect_tracking');
-  if (stored) {
-    try {
-      const data = JSON.parse(stored);
-      // Clear after reading
-      sessionStorage.removeItem('fb_redirect_tracking');
-      return data;
-    } catch (error) {
-      console.error('Error parsing stored Facebook data:', error);
-    }
-  }
-  return null;
 };

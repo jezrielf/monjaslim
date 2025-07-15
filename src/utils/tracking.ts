@@ -58,6 +58,9 @@ export const extractUTMParams = (): UTMParams => {
     utm_term: urlParams.get('utm_term') || '',
     fbclid: urlParams.get('fbclid') || '',
     fb_source: urlParams.get('fb_source') || '',
+    fb_campaign_id: urlParams.get('campaign_id') || urlParams.get('cid') || urlParams.get('camp_id') || '',
+    fb_ad_id: urlParams.get('ad_id') || urlParams.get('aid') || '',
+    fb_adset_id: urlParams.get('adset_id') || urlParams.get('asid') || '',
   };
 
   // Check if we have any actual UTM parameters from URL
@@ -67,7 +70,10 @@ export const extractUTMParams = (): UTMParams => {
     utmParams.utm_campaign || 
     utmParams.utm_content || 
     utmParams.utm_term ||
-    utmParams.fbclid
+    utmParams.fbclid ||
+    utmParams.fb_campaign_id ||
+    utmParams.fb_ad_id ||
+    utmParams.fb_adset_id
   );
   
   console.log('🔍 UTM Check:', { hasAnyUTM, urlParams: Object.fromEntries(urlParams) });
@@ -92,7 +98,12 @@ export const extractUTMParams = (): UTMParams => {
     referrer: document.referrer,
     hasOriginalUTMs: hasAnyUTM,
     extractedUTMs: utmParams,
-    detectionSource: detectTrafficSource()
+    detectionSource: detectTrafficSource(),
+    facebook_ids: {
+      campaign_id: utmParams.fb_campaign_id,
+      ad_id: utmParams.fb_ad_id,
+      adset_id: utmParams.fb_adset_id
+    }
   });
 
   return utmParams;
@@ -167,6 +178,9 @@ export const trackFunnelEvent = (
       utm_term: trackingData.utm_term,
       fbclid: trackingData.fbclid,
       fb_source: trackingData.fb_source,
+      fb_campaign_id: trackingData.fb_campaign_id,
+      fb_ad_id: trackingData.fb_ad_id,
+      fb_adset_id: trackingData.fb_adset_id,
     },
     form_data: formData,
     time_on_step: timeOnStep,

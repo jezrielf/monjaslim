@@ -6,6 +6,9 @@ export interface UTMParams {
   utm_term: string;
   fbclid: string;
   fb_source: string;
+  fb_campaign_id: string;
+  fb_ad_id: string;
+  fb_adset_id: string;
 }
 
 export interface TrackingData extends UTMParams {

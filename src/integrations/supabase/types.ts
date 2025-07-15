@@ -71,6 +71,9 @@ export type Database = {
           delivery_status: string | null
           dia_agenda: string | null
           email: string | null
+          fb_ad_id: string | null
+          fb_adset_id: string | null
+          fb_campaign_id: string | null
           fb_source: string | null
           fbclid: string | null
           final_action: string | null
@@ -113,6 +116,9 @@ export type Database = {
           delivery_status?: string | null
           dia_agenda?: string | null
           email?: string | null
+          fb_ad_id?: string | null
+          fb_adset_id?: string | null
+          fb_campaign_id?: string | null
           fb_source?: string | null
           fbclid?: string | null
           final_action?: string | null
@@ -155,6 +161,9 @@ export type Database = {
           delivery_status?: string | null
           dia_agenda?: string | null
           email?: string | null
+          fb_ad_id?: string | null
+          fb_adset_id?: string | null
+          fb_campaign_id?: string | null
           fb_source?: string | null
           fbclid?: string | null
           final_action?: string | null

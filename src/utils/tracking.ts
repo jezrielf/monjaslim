@@ -1,3 +1,4 @@
+
 import { UTMParams, TrackingData, FunnelEvent, FunnelEventType } from '@/types/tracking';
 
 // Generate unique session ID
@@ -470,5 +471,4 @@ const checkStoredFacebookData = (): Partial<UTMParams> | null => {
     }
   }
   return null;
-};</document_content>
-</invoke>
+};

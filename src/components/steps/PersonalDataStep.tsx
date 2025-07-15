@@ -121,7 +121,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
 
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="nome">Nome Completo *</Label>
           <Input
@@ -153,7 +153,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
       </div>
 
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="cep">CEP *</Label>
           <div className="relative">
@@ -204,7 +204,7 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-2 sm:gap-6">
         <div className="space-y-2">
           <Label htmlFor="rua">Rua</Label>
           <Input

@@ -60,31 +60,39 @@ export const extractUTMParams = (): UTMParams => {
     fb_source: urlParams.get('fb_source') || '',
   };
 
-  // If no UTMs found, apply fallback detection
-  const hasAnyUTM = Object.values(utmParams).some(value => value !== '');
+  // Check if we have any actual UTM parameters from URL
+  const hasAnyUTM = Boolean(
+    utmParams.utm_source || 
+    utmParams.utm_medium || 
+    utmParams.utm_campaign || 
+    utmParams.utm_content || 
+    utmParams.utm_term ||
+    utmParams.fbclid
+  );
   
+  console.log('🔍 UTM Check:', { hasAnyUTM, urlParams: Object.fromEntries(urlParams) });
+  
+  // If no UTMs found, apply fallback detection
   if (!hasAnyUTM) {
     const detected = detectTrafficSource();
-    console.log('🔍 Fallback detection applied:', detected);
+    console.log('🔍 Applying fallback detection:', detected);
     
-    utmParams = {
-      ...utmParams,
-      utm_source: detected.source,
-      utm_medium: detected.medium,
-      fb_source: detected.isSocial ? 'social_fallback' : '',
-    };
+    // Apply fallback values
+    utmParams.utm_source = detected.source;
+    utmParams.utm_medium = detected.medium;
+    utmParams.fb_source = detected.isSocial ? 'social_fallback' : '';
+    
+    console.log('🎯 Fallback UTMs applied:', utmParams);
   }
 
-  // Enhanced debugging for Facebook UTMs
-  console.log('🎯 Facebook UTM Extraction:', {
+  // Enhanced debugging for UTM tracking
+  console.log('🎯 UTM Extraction Final Result:', {
     url: window.location.href,
     searchParams: window.location.search,
     referrer: document.referrer,
-    userAgent: navigator.userAgent,
+    hasOriginalUTMs: hasAnyUTM,
     extractedUTMs: utmParams,
-    hasFBUTMs: utmParams.utm_source === 'FB' || utmParams.utm_source === 'facebook',
-    fbclid: utmParams.fbclid,
-    detectedSocial: detectTrafficSource()
+    detectionSource: detectTrafficSource()
   });
 
   return utmParams;

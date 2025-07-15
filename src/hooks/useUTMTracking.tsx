@@ -1,3 +1,4 @@
+
 import { useEffect, useRef, useCallback, useState } from 'react';
 import { 
   createTrackingData, 
@@ -355,5 +356,4 @@ export const useCompleteTracking = (currentStep: number, formData?: any) => {
     ...submissionTracking,
     ...navigationTracking,
   };
-};</document_content>
-</invoke>
+};

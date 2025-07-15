@@ -1,3 +1,4 @@
+
 import { UTMParams, TrackingData, FunnelEvent, FunnelEventType } from '@/types/tracking';
 
 // Generate unique session ID
@@ -363,5 +364,4 @@ export const overrideUTMParams = (params: Partial<UTMParams>): void => {
     storeUTMs(updatedData);
     console.log('🔧 UTM params manually overridden:', params);
   }
-};</document_content>
-</invoke>
+};

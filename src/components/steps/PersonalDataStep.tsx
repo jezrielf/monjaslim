@@ -23,10 +23,6 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
 
-  const validateEmail = (email: string) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
 
   const validatePhone = (phone: string) => {
     const phoneRegex = /^\(\d{2}\) \d{5}-\d{4}$/;
@@ -104,11 +100,6 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
       newErrors.telefone = 'Formato: (xx) xxxxx-xxxx';
     }
 
-    if (!data.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-    } else if (!validateEmail(data.email)) {
-      newErrors.email = 'Email inválido';
-    }
 
     if (!data.cep.trim()) {
       newErrors.cep = 'CEP é obrigatório';
@@ -161,20 +152,6 @@ export const PersonalDataStep: React.FC<PersonalDataStepProps> = ({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email *</Label>
-        <Input
-          id="email"
-          type="email"
-          value={data.email}
-          onChange={(e) => updateData({ email: e.target.value })}
-          placeholder="seu@email.com"
-          className={errors.email ? 'border-destructive' : ''}
-        />
-        {errors.email && (
-          <p className="text-sm text-destructive">{errors.email}</p>
-        )}
-      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-2">

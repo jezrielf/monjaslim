@@ -259,7 +259,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
               </div>
             </div>
             
-            <div className="flex items-start gap-3">
+          {/*  <div className="flex items-start gap-3">
               <div className="bg-green-100 dark:bg-green-900/50 p-2 rounded-full">
                 <CreditCard className="h-4 w-4 text-green-600 dark:text-green-400" />
               </div>
@@ -271,7 +271,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
                   Divida em até <strong>12x sem juros</strong> no cartão de crédito
                 </p>
               </div>
-            </div>
+            </div> */}
             
             <div className="flex items-start gap-3">
               <div className="bg-amber-100 dark:bg-amber-900/50 p-2 rounded-full">

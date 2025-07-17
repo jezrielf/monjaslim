@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ChevronLeft, ChevronRight, Check, Star } from 'lucide-react';
 import { FormData } from '../FormWizard';
-import { trackFunnelEvent } from '@/utils/tracking';
+
 
 interface TreatmentStepProps {
   data: FormData;
@@ -89,13 +89,6 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
       setTimeout(() => {
         setIsUpdating(false);
         
-        // Track após confirmação
-        trackFunnelEvent('treatment_selection_made', 3, {
-          selected_treatment: treatmentId,
-          treatment_name: treatment.name,
-          treatment_price: treatment.pixPrice,
-          form_data_updated: treatmentData
-        });
         
         console.log('✅ Dados do tratamento atualizados com sucesso');
       }, 200);
@@ -126,13 +119,6 @@ export const TreatmentStep: React.FC<TreatmentStepProps> = ({
       return;
     }
 
-    // Track next button click com dados atuais
-    trackFunnelEvent('treatment_next_clicked', 3, {
-      selected_treatment: selectedTreatment,
-      has_selection: !!selectedTreatment,
-      tipo_tratamento: data.tipoTratamento,
-      preco_tratamento: data.precoTratamento
-    });
 
     console.log('🚀 Avançando para próximo step com dados:', {
       tipoTratamento: data.tipoTratamento,

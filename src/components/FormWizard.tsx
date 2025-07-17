@@ -10,8 +10,6 @@ import { SchedulingStep } from './steps/SchedulingStep';
 import { ReviewStep } from './steps/ReviewStep';
 import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
-import { useUTMTracking, useStepTracking, useSubmissionTracking, useNavigationTracking } from '@/hooks/useUTMTracking';
-import { formatTrackingForSubmission, getTrackingData, getFunnelEvents } from '@/utils/tracking';
 import { useSupabaseSubmission } from '@/hooks/useSupabaseSubmission';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -91,11 +89,6 @@ export const FormWizard: React.FC = () => {
 
   const steps = getActiveSteps();
 
-  // Initialize Facebook tracking
-  const { trackingData } = useUTMTracking();
-  useStepTracking(currentStep, formData);
-  const { trackSubmission } = useSubmissionTracking();
-  const { trackStepBack, trackStepEdit } = useNavigationTracking();
   
   // Initialize Supabase submission
   const { submitFormData, isSubmitting: isSupabaseSubmitting } = useSupabaseSubmission();
@@ -139,23 +132,22 @@ export const FormWizard: React.FC = () => {
     if (formData.modalidadeCompra === 'site-sedex') {
       // Conditional navigation for site oficial
       if (currentStep === 5) {
-        trackStepBack(currentStep, 3);
+        
         setCurrentStep(3); // Revisão -> Tratamento
       } else if (currentStep === 3) {
-        trackStepBack(currentStep, 1);
+        
         setCurrentStep(1); // Tratamento -> Modalidade
       }
     } else {
       // Normal navigation for pagar na entrega
       if (currentStep > 1) {
-        trackStepBack(currentStep, currentStep - 1);
+        
         setCurrentStep(currentStep - 1);
       }
     }
   };
 
   const goToStep = (step: number) => {
-    trackStepEdit(currentStep, step);
     setCurrentStep(step);
   };
 
@@ -177,85 +169,63 @@ export const FormWizard: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      // Track form submission
-      trackSubmission(formData);
-      
-      // Get tracking data for Supabase submission
-      const trackingData = getTrackingData();
-      const funnelEvents = getFunnelEvents();
-      
-      if (trackingData) {
-        // Prepare data for Supabase
-        const formattedFormData = {
-          purchaseMethod: formData.modalidadeCompra,
-          nome: formData.nome,
-          telefone: formData.telefone,
-          email: formData.email,
-          cep: formData.cep,
-          rua: formData.rua,
-          bairro: formData.bairro,
-          cidade: formData.cidade,
-          numero: formData.numero,
-          complemento: formData.complemento,
-          treatmentType: formData.tipoTratamento,
-          treatmentPrice: formData.precoTratamento,
-          selectedDay: formData.diaAgenda,
-          selectedTime: formData.horarioAgenda,
-          acceptance: formData.aceiteFinal,
-        };
+      // Prepare data for Supabase
+      const formattedFormData = {
+        purchaseMethod: formData.modalidadeCompra,
+        nome: formData.nome,
+        telefone: formData.telefone,
+        email: formData.email,
+        cep: formData.cep,
+        rua: formData.rua,
+        bairro: formData.bairro,
+        cidade: formData.cidade,
+        numero: formData.numero,
+        complemento: formData.complemento,
+        treatmentType: formData.tipoTratamento,
+        treatmentPrice: formData.precoTratamento,
+        selectedDay: formData.diaAgenda,
+        selectedTime: formData.horarioAgenda,
+        acceptance: formData.aceiteFinal,
+      };
 
-        const conversionData = {
-          total_time: '0', // Will be calculated in the hook
-          completed_steps: 5,
-          final_action: formData.modalidadeCompra === 'site-sedex' ? 'redirect_to_site' as const : 'success_page' as const,
-          conversion_value: formData.precoTratamento,
-        };
+      // Submit to Supabase
+      const result = await submitFormData(formattedFormData);
 
-        // Submit to Supabase
-        const result = await submitFormData(
-          formattedFormData,
-          trackingData,
-          funnelEvents,
-          conversionData
-        );
+      if (!result.success) {
+        throw new Error(result.error);
+      }
 
-        if (!result.success) {
-          throw new Error(result.error);
-        }
-
-        // Enviar e-mail de notificação
-        try {
-          console.log('Enviando e-mail com dados do tratamento:', { 
-            tipo_tratamento: formData.tipoTratamento, 
-            preco_tratamento: formData.precoTratamento 
-          });
-          await supabase.functions.invoke('send-notification-email', {
-            body: {
-              leadData: {
-                nome: formData.nome || 'Não informado',
-                telefone: formData.telefone || 'Não informado',
-                email: formData.email || 'Não informado',
-                rua: formData.rua || 'Não informado',
-                numero: formData.numero || 'Não informado',
-                bairro: formData.bairro || 'Não informado',
-                cidade: formData.cidade || 'Não informado',
-                cep: formData.cep || 'Não informado',
-                complemento: formData.complemento || '',
-                modalidade_compra: formData.modalidadeCompra,
-                tipo_tratamento: formData.tipoTratamento,
-                preco_tratamento: formData.precoTratamento,
-                dia_agenda: formData.diaAgenda || '',
-                horario_agenda: formData.horarioAgenda || '',
-              },
-              utmData: trackingData,
-              timestamp: new Date().toLocaleString('pt-BR'),
+      // Enviar e-mail de notificação
+      try {
+        console.log('Enviando e-mail com dados do tratamento:', { 
+          tipo_tratamento: formData.tipoTratamento, 
+          preco_tratamento: formData.precoTratamento 
+        });
+        await supabase.functions.invoke('send-notification-email', {
+          body: {
+            leadData: {
+              nome: formData.nome || 'Não informado',
+              telefone: formData.telefone || 'Não informado',
+              email: formData.email || 'Não informado',
+              rua: formData.rua || 'Não informado',
+              numero: formData.numero || 'Não informado',
+              bairro: formData.bairro || 'Não informado',
+              cidade: formData.cidade || 'Não informado',
+              cep: formData.cep || 'Não informado',
+              complemento: formData.complemento || '',
+              modalidade_compra: formData.modalidadeCompra,
+              tipo_tratamento: formData.tipoTratamento,
+              preco_tratamento: formData.precoTratamento,
+              dia_agenda: formData.diaAgenda || '',
+              horario_agenda: formData.horarioAgenda || '',
             },
-          });
-          console.log('E-mail de notificação enviado com sucesso');
-        } catch (emailError) {
-          console.error('Erro ao enviar e-mail de notificação:', emailError);
-          // Não interrompe o fluxo se o e-mail falhar
-        }
+            timestamp: new Date().toLocaleString('pt-BR'),
+          },
+        });
+        console.log('E-mail de notificação enviado com sucesso');
+      } catch (emailError) {
+        console.error('Erro ao enviar e-mail de notificação:', emailError);
+        // Não interrompe o fluxo se o e-mail falhar
       }
       
       // Redirecionamento para site oficial se modalidade for 'site-sedx'
@@ -269,8 +239,6 @@ export const FormWizard: React.FC = () => {
         
         const redirectUrl = treatmentUrls[formData.tipoTratamento as keyof typeof treatmentUrls];
         if (redirectUrl) {
-          // Track redirect before leaving page
-          trackSubmission(formData, redirectUrl);
           window.location.href = redirectUrl;
           return;
         }

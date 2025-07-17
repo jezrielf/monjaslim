@@ -4,7 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Check, Truck, DollarSign, MapPin, AlertCircle, ExternalLink } from 'lucide-react';
 import { FormData } from '../FormWizard';
 import { CEPValidationModal } from '../CEPValidationModal';
-import { trackFunnelEvent } from '@/utils/tracking';
+
 import { useState } from 'react';
 import {
   Dialog,
@@ -58,10 +58,6 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
           updateData({ modalidadeCompra: method });
           onNext(2);
         } else {
-          trackFunnelEvent('delivery_blocked_invalid_cep', 1, { 
-            cep: currentCEP.replace(/\D/g, ''),
-            context: 'existing_cep'
-          });
           setShowRedirectModal(true);
         }
       } else {
@@ -96,10 +92,6 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
   };
 
   const handleRedirectToSite = () => {
-    trackFunnelEvent('redirected_to_official_site', 1, { 
-      source: 'purchase_method_redirect_modal'
-    });
-    
     window.open('https://app.monetizze.com.br/checkout/DXM349681', '_blank');
     setShowRedirectModal(false);
   };

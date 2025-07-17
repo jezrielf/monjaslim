@@ -12,7 +12,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { MapPin, Loader2, AlertCircle, ExternalLink } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { trackFunnelEvent } from '@/utils/tracking';
+
 
 interface CEPValidationModalProps {
   isOpen: boolean;
@@ -61,7 +61,7 @@ export const CEPValidationModal: React.FC<CEPValidationModalProps> = ({
     }
 
     setIsLoading(true);
-    trackFunnelEvent('cep_validation_requested', 1, { cep: cleanCep });
+    
 
     try {
       // Primeiro, validação por range numérico
@@ -75,10 +75,6 @@ export const CEPValidationModal: React.FC<CEPValidationModalProps> = ({
         setValidationResult({
           isValid: false,
           message: "CEP não encontrado. Verifique o CEP informado."
-        });
-        trackFunnelEvent('cep_validation_failed', 1, { 
-          cep: cleanCep, 
-          reason: 'cep_not_found' 
         });
         return;
       }
@@ -94,12 +90,6 @@ export const CEPValidationModal: React.FC<CEPValidationModalProps> = ({
           : `❌ Infelizmente não atendemos ${city} ainda`
       });
 
-      if (!isDivinopolis) {
-        trackFunnelEvent('delivery_blocked_invalid_cep', 1, { 
-          cep: cleanCep,
-          city: city 
-        });
-      }
 
       onCEPValidated(cep, isDivinopolis);
 
@@ -115,24 +105,12 @@ export const CEPValidationModal: React.FC<CEPValidationModalProps> = ({
       
       onCEPValidated(cep, isValidRange);
       
-      if (!isValidRange) {
-        trackFunnelEvent('delivery_blocked_invalid_cep', 1, { 
-          cep: cleanCep,
-          reason: 'api_error_fallback' 
-        });
-      }
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleRedirectToSite = () => {
-    trackFunnelEvent('redirected_to_official_site', 1, { 
-      source: 'cep_validation_modal',
-      cep: cep.replace(/\D/g, ''),
-      city: validationResult?.city
-    });
-    
     // Informar ao componente pai para definir modalidade e ir para ReviewStep
     onCEPValidated('site-oficial', true); // Passa flag especial
     onClose();

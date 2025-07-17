@@ -16,61 +16,94 @@ export interface TrackingEventData {
   event_value?: number;
 }
 
-export const trackConversionEvent = (eventData: TrackingEventData) => {
-  try {
-    // Check if UTMify is loaded
-    if (typeof window !== 'undefined' && window.utmify) {
-      const eventProperties = {
-        event_category: 'conversion',
-        event_label: eventData.treatment_type || 'unknown',
-        value: eventData.event_value || 0,
-        currency: 'BRL',
-        content_name: eventData.treatment_type,
-        content_category: 'treatment',
-        custom_data: {
-          purchase_mode: eventData.purchase_mode,
-          treatment_value: eventData.treatment_value,
-          lead_id: eventData.lead_id
-        }
-      };
-
-      // Track Purchase event with R$ 0.00 value for conversion tracking
-      window.utmify.track('Purchase', eventProperties);
+// Wait for UTMify to be available with polling and timeout
+const waitForUTMify = (timeout = 10000): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const startTime = Date.now();
+    
+    const checkUTMify = () => {
+      console.log('🔍 Checking UTMify availability...', {
+        utmifyExists: !!(window as any).utmify,
+        pixelId: (window as any).pixelId,
+        timeElapsed: Date.now() - startTime
+      });
       
-      console.log('UTMify Purchase event tracked:', eventProperties);
-    } else {
-      console.warn('UTMify not loaded, tracking event skipped');
+      if (typeof window !== 'undefined' && (window as any).utmify && typeof (window as any).utmify.track === 'function') {
+        console.log('✅ UTMify is ready!');
+        resolve(true);
+        return;
+      }
+      
+      if (Date.now() - startTime > timeout) {
+        console.warn('⏰ UTMify loading timeout after', timeout, 'ms');
+        resolve(false);
+        return;
+      }
+      
+      setTimeout(checkUTMify, 100);
+    };
+    
+    checkUTMify();
+  });
+};
+
+// Send simplified event to UTMify
+const sendUTMifyEvent = async (eventName: string, eventData: TrackingEventData) => {
+  try {
+    console.log(`🚀 Attempting to send ${eventName} event to UTMify...`);
+    
+    const isReady = await waitForUTMify();
+    
+    if (!isReady) {
+      console.error('❌ UTMify not available, cannot send event');
+      return false;
     }
+
+    // Simplified event structure more likely to work
+    const simpleEvent = {
+      value: eventData.event_value || 0,
+      currency: 'BRL',
+      content_name: eventData.treatment_type || 'unknown',
+      custom_parameter_1: eventData.purchase_mode || 'unknown',
+      custom_parameter_2: eventData.treatment_value || 'unknown',
+      custom_parameter_3: eventData.lead_id || 'unknown'
+    };
+
+    console.log(`📤 Sending ${eventName} to UTMify:`, simpleEvent);
+    
+    (window as any).utmify.track(eventName, simpleEvent);
+    
+    console.log(`✅ ${eventName} event sent successfully to UTMify`);
+    return true;
+    
   } catch (error) {
-    console.error('Error tracking conversion event:', error);
+    console.error(`❌ Error sending ${eventName} to UTMify:`, error);
+    return false;
   }
 };
 
-export const trackLeadEvent = (eventData: TrackingEventData) => {
-  try {
-    if (typeof window !== 'undefined' && window.utmify) {
-      const eventProperties = {
-        event_category: 'lead_generation',
-        event_label: eventData.treatment_type || 'unknown',
-        value: 0,
-        currency: 'BRL',
-        content_name: eventData.treatment_type,
-        content_category: 'treatment',
-        custom_data: {
-          purchase_mode: eventData.purchase_mode,
-          treatment_value: eventData.treatment_value,
-          lead_id: eventData.lead_id
-        }
-      };
+export const trackConversionEvent = async (eventData: TrackingEventData) => {
+  console.log('🎯 Starting conversion tracking...', eventData);
+  
+  // Try Purchase event first
+  const purchaseSuccess = await sendUTMifyEvent('Purchase', eventData);
+  
+  // Also try a simpler "Conversion" event as fallback
+  if (!purchaseSuccess) {
+    console.log('🔄 Purchase failed, trying Conversion event...');
+    await sendUTMifyEvent('Conversion', eventData);
+  }
+};
 
-      // Track Lead event
-      window.utmify.track('Lead', eventProperties);
-      
-      console.log('UTMify Lead event tracked:', eventProperties);
-    } else {
-      console.warn('UTMify not loaded, lead tracking event skipped');
-    }
-  } catch (error) {
-    console.error('Error tracking lead event:', error);
+export const trackLeadEvent = async (eventData: TrackingEventData) => {
+  console.log('🎯 Starting lead tracking...', eventData);
+  
+  // Try Lead event first
+  const leadSuccess = await sendUTMifyEvent('Lead', eventData);
+  
+  // Also try "CompleteRegistration" as fallback
+  if (!leadSuccess) {
+    console.log('🔄 Lead failed, trying CompleteRegistration event...');
+    await sendUTMifyEvent('CompleteRegistration', eventData);
   }
 };

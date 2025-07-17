@@ -5,8 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ChevronLeft, Edit2, Send, Loader2, CheckCircle, User, Package, Calendar, MapPin, ExternalLink, CreditCard, Zap } from 'lucide-react';
 import { FormData } from '../FormWizard';
-import { trackConversionEvent, trackLeadEvent } from '@/utils/tracking';
-import { trackPurchaseConversion } from '@/utils/multiplatform-tracking';
 
 interface ReviewStepProps {
   data: FormData;
@@ -65,34 +63,6 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
 
   const handleAcceptToggle = () => {
     updateData({ aceiteFinal: !data.aceiteFinal });
-  };
-
-  const handleSubmitWithTracking = () => {
-    // Track conversion event before submission
-    const trackingData = {
-      treatment_type: data.tipoTratamento,
-      purchase_mode: data.modalidadeCompra,
-      treatment_value: data.precoTratamento || 'N/A',
-      lead_id: `lead_${Date.now()}`,
-      event_value: 0 // R$ 0.00 as requested
-    };
-
-    // Multi-platform Purchase tracking (UTMify, Facebook, GA, GTM)
-    trackPurchaseConversion({
-      value: 0.00,
-      currency: 'BRL',
-      treatment_type: data.tipoTratamento || 'unknown',
-      purchase_mode: data.modalidadeCompra || 'unknown',
-      treatment_value: data.precoTratamento || 'N/A',
-      lead_id: `lead_${Date.now()}`
-    });
-
-    // Keep existing UTMify-specific tracking as backup
-    trackConversionEvent(trackingData);
-    trackLeadEvent(trackingData);
-
-    // Call the original submit function
-    onSubmit();
   };
 
   const isSiteOficial = data.modalidadeCompra === 'site-sedex';
@@ -370,7 +340,7 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
         </Button>
 
         <Button
-          onClick={handleSubmitWithTracking}
+          onClick={onSubmit}
           disabled={!data.aceiteFinal || isSubmitting}
           className="bg-gradient-primary hover:opacity-90 shadow-glow"
           size="lg"

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useUTM } from '@/contexts/UTMContext';
 
 interface FormData {
   purchaseMethod: string;
@@ -23,12 +24,13 @@ interface FormData {
 export const useSupabaseSubmission = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
+  const { trackingData } = useUTM();
 
   const submitFormData = async (formData: FormData) => {
     setIsSubmitting(true);
     
     try {
-      // Insert lead data
+      // Insert lead data with UTM tracking
       const { data: leadData, error: leadError } = await supabase
         .from('leads')
         .insert({
@@ -51,6 +53,21 @@ export const useSupabaseSubmission = () => {
           horario_agenda: formData.selectedTime,
           aceite_final: formData.acceptance,
           data_preenchimento: new Date().toISOString(),
+          
+          // UTM and tracking data
+          utm_source: trackingData.utm_source,
+          utm_medium: trackingData.utm_medium,
+          utm_campaign: trackingData.utm_campaign,
+          utm_content: trackingData.utm_content,
+          utm_term: trackingData.utm_term,
+          fbclid: trackingData.fbclid,
+          fb_campaign_id: trackingData.fb_campaign_id,
+          fb_ad_id: trackingData.fb_ad_id,
+          fb_adset_id: trackingData.fb_adset_id,
+          referrer: trackingData.referrer,
+          page_url: trackingData.page_url,
+          user_agent: trackingData.user_agent,
+          session_id: trackingData.session_id,
         })
         .select('id')
         .single();

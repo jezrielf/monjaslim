@@ -6,6 +6,7 @@ import { Separator } from '@/components/ui/separator';
 import { ChevronLeft, Edit2, Send, Loader2, CheckCircle, User, Package, Calendar, MapPin, ExternalLink, CreditCard, Zap } from 'lucide-react';
 import { FormData } from '../FormWizard';
 import { trackConversionEvent, trackLeadEvent } from '@/utils/tracking';
+import { trackPurchaseConversion } from '@/utils/multiplatform-tracking';
 
 interface ReviewStepProps {
   data: FormData;
@@ -76,7 +77,17 @@ export const ReviewStep: React.FC<ReviewStepProps> = ({
       event_value: 0 // R$ 0.00 as requested
     };
 
-    // Track both Purchase and Lead events for comprehensive tracking
+    // Multi-platform Purchase tracking (UTMify, Facebook, GA, GTM)
+    trackPurchaseConversion({
+      value: 0.00,
+      currency: 'BRL',
+      treatment_type: data.tipoTratamento || 'unknown',
+      purchase_mode: data.modalidadeCompra || 'unknown',
+      treatment_value: data.precoTratamento || 'N/A',
+      lead_id: `lead_${Date.now()}`
+    });
+
+    // Keep existing UTMify-specific tracking as backup
     trackConversionEvent(trackingData);
     trackLeadEvent(trackingData);
 

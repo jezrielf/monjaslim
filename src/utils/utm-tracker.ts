@@ -24,11 +24,31 @@ const generateSessionId = (): string => {
   return 'session_' + Math.random().toString(36).substr(2, 9) + Date.now().toString(36);
 };
 
-// Extract UTM parameters from URL
+// Extract Facebook IDs from UTM parameters
+const extractFacebookIDs = (utmData: UTMParams) => {
+  const extractIdFromString = (str: string | null, idPattern: RegExp): string | null => {
+    if (!str) return null;
+    const match = str.match(idPattern);
+    return match ? match[1] : null;
+  };
+
+  // Extract IDs from utm_campaign, utm_content, utm_term if they follow the pattern: name_id
+  const fb_campaign_id = extractIdFromString(utmData.utm_campaign, /_(\d+)$/) || utmData.fb_campaign_id;
+  const fb_adset_id = extractIdFromString(utmData.utm_content, /_(\d+)$/) || utmData.fb_adset_id;
+  const fb_ad_id = extractIdFromString(utmData.utm_term, /_(\d+)$/) || utmData.fb_ad_id;
+
+  return {
+    fb_campaign_id,
+    fb_adset_id,
+    fb_ad_id,
+  };
+};
+
+// Extract UTM parameters from URL with enhanced Facebook tracking
 export const extractUTMFromURL = (search: string = window.location.search): UTMParams => {
   const params = new URLSearchParams(search);
   
-  return {
+  const basicUTMs = {
     utm_source: params.get('utm_source'),
     utm_medium: params.get('utm_medium'),
     utm_campaign: params.get('utm_campaign'),
@@ -38,6 +58,14 @@ export const extractUTMFromURL = (search: string = window.location.search): UTMP
     fb_campaign_id: params.get('fb_campaign_id'),
     fb_ad_id: params.get('fb_ad_id'),
     fb_adset_id: params.get('fb_adset_id'),
+  };
+
+  // Extract Facebook IDs from UTM strings if not directly provided
+  const facebookIDs = extractFacebookIDs(basicUTMs);
+
+  return {
+    ...basicUTMs,
+    ...facebookIDs,
   };
 };
 

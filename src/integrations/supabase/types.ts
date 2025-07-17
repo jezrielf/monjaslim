@@ -14,6 +14,66 @@ export type Database = {
   }
   public: {
     Tables: {
+      facebook_insights: {
+        Row: {
+          ad_id: string | null
+          ad_name: string | null
+          adset_id: string | null
+          adset_name: string | null
+          campaign_id: string
+          campaign_name: string
+          clicks: number
+          cpc: number
+          cpm: number
+          created_at: string
+          ctr: number
+          date_start: string
+          date_stop: string
+          id: string
+          impressions: number
+          spend: number
+          updated_at: string
+        }
+        Insert: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          campaign_id: string
+          campaign_name: string
+          clicks?: number
+          cpc?: number
+          cpm?: number
+          created_at?: string
+          ctr?: number
+          date_start: string
+          date_stop: string
+          id?: string
+          impressions?: number
+          spend?: number
+          updated_at?: string
+        }
+        Update: {
+          ad_id?: string | null
+          ad_name?: string | null
+          adset_id?: string | null
+          adset_name?: string | null
+          campaign_id?: string
+          campaign_name?: string
+          clicks?: number
+          cpc?: number
+          cpm?: number
+          created_at?: string
+          ctr?: number
+          date_start?: string
+          date_stop?: string
+          id?: string
+          impressions?: number
+          spend?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       funnel_events: {
         Row: {
           event_type: string

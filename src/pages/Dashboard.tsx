@@ -4,12 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Navigation } from '@/components/Navigation';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader, TrendingUp, Users, MousePointer, DollarSign, Filter, Calendar, Download } from 'lucide-react';
+import { Loader, TrendingUp, Users, MousePointer, DollarSign, Filter, Calendar, Download, RefreshCw, ExternalLink } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { DatePickerWithRange } from '@/components/ui/date-range-picker';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { DateRange } from 'react-day-picker';
+import { useFacebookInsights } from '@/hooks/useFacebookInsights';
+import { useToast } from '@/hooks/use-toast';
 
 interface Lead {
   id: string;
@@ -23,6 +25,9 @@ interface Lead {
   utm_campaign: string;
   utm_content: string;
   utm_term: string;
+  fb_campaign_id: string;
+  fb_adset_id: string;
+  fb_ad_id: string;
   modalidade_compra: string;
   tipo_tratamento: string;
   preco_tratamento: string;
@@ -47,6 +52,9 @@ export default function Dashboard() {
     utmMedium: 'all',
     utmCampaign: 'all',
   });
+  
+  const { syncFacebookData, getLeadInsights, loading: facebookLoading } = useFacebookInsights();
+  const { toast } = useToast();
 
   const fetchLeads = async () => {
     setLoading(true);
@@ -158,14 +166,25 @@ export default function Dashboard() {
       <Navigation />
       <div className="min-h-screen bg-background">
         <div className="container mx-auto px-4 py-8 pt-20">
-          {/* Header */}
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-2">
-              Dashboard Analytics
-            </h1>
-            <p className="text-muted-foreground">
-              Acompanhe a performance das suas campanhas e leads
-            </p>
+          {/* Header com botão de sync do Facebook */}
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-4xl font-bold text-primary mb-2">
+                Dashboard Analytics Ultra-Preciso
+              </h1>
+              <p className="text-muted-foreground">
+                Tracking avançado do Meta com dados em tempo real
+              </p>
+            </div>
+            <Button 
+              onClick={() => syncFacebookData()} 
+              disabled={facebookLoading}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${facebookLoading ? 'animate-spin' : ''}`} />
+              {facebookLoading ? 'Sincronizando...' : 'Sincronizar Meta'}
+            </Button>
           </div>
 
           {/* Filters */}
@@ -173,7 +192,7 @@ export default function Dashboard() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Filter className="h-5 w-5" />
-                Filtros
+                Filtros Avançados
               </CardTitle>
             </CardHeader>
             <CardContent>

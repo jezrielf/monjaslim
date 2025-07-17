@@ -19,10 +19,16 @@
     <!-- UTMify Tracking Pixel -->
     <script>
       window.pixelId = "687904fb58e1a43f1880497a";
+      window.utmifyLoaded = false;
       var a = document.createElement("script");
-      a.setAttribute("async", "");
-      a.setAttribute("defer", "");
       a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+      a.onload = function() { 
+        window.utmifyLoaded = true; 
+        console.log('🔥 UTMify script loaded successfully');
+      };
+      a.onerror = function() { 
+        console.error('❌ UTMify script failed to load');
+      };
       document.head.appendChild(a);
     </script>
     

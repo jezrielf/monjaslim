@@ -2,7 +2,7 @@
 import ReactGA from 'react-ga4';
 
 // GA4 Configuration
-export const GA4_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Substituir pelo seu Measurement ID
+export const GA4_MEASUREMENT_ID = 'G-J64W8RNLD6';
 
 // Initialize GA4
 export const initializeGA4 = () => {

@@ -83,6 +83,11 @@ export const trackConversion = (leadData: any, utmData: any) => {
     transaction_id: `lead_${Date.now()}`,
     value: conversionValue,
     currency: 'BRL',
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || '',
+    utm_content: utmData.utm_content || '',
+    utm_term: utmData.utm_term || '',
     items: [{
       item_id: leadData.tipoTratamento,
       item_name: leadData.tipoTratamento,
@@ -105,13 +110,28 @@ const getConversionValue = (priceString: string): number => {
   return priceMap[priceString] || 0;
 };
 
-// Track page views
+// Track page views with UTM data
+export const trackPageViewWithUTM = (path: string, utmData: any = {}, title?: string) => {
+  const pageViewData: any = {
+    page_location: window.location.href,
+    page_path: path,
+    page_title: title || document.title,
+  };
+
+  // Add UTM parameters if available
+  if (utmData.utm_source) pageViewData.utm_source = utmData.utm_source;
+  if (utmData.utm_medium) pageViewData.utm_medium = utmData.utm_medium;
+  if (utmData.utm_campaign) pageViewData.utm_campaign = utmData.utm_campaign;
+  if (utmData.utm_content) pageViewData.utm_content = utmData.utm_content;
+  if (utmData.utm_term) pageViewData.utm_term = utmData.utm_term;
+  if (utmData.session_id) pageViewData.session_id = utmData.session_id;
+
+  ReactGA.gtag('event', 'page_view', pageViewData);
+};
+
+// Track page views (legacy function for compatibility)
 export const trackPageView = (path: string, title?: string) => {
-  ReactGA.send({ 
-    hitType: 'pageview', 
-    page: path,
-    title: title || document.title 
-  });
+  trackPageViewWithUTM(path, {}, title);
 };
 
 // Track timing events (time spent on steps)

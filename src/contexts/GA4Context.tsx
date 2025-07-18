@@ -1,7 +1,8 @@
 
 import React, { createContext, useContext, useEffect } from 'react';
-import { initializeGA4, trackPageView } from '@/utils/ga4-tracker';
+import { initializeGA4, trackPageViewWithUTM } from '@/utils/ga4-tracker';
 import { useLocation } from 'react-router-dom';
+import { useUTM } from '@/contexts/UTMContext';
 
 interface GA4ContextType {
   initialized: boolean;
@@ -23,6 +24,7 @@ interface GA4ProviderProps {
 
 export const GA4Provider: React.FC<GA4ProviderProps> = ({ children }) => {
   const location = useLocation();
+  const { trackingData, isLoaded } = useUTM();
 
   useEffect(() => {
     // Initialize GA4 on app start
@@ -31,10 +33,19 @@ export const GA4Provider: React.FC<GA4ProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    // Track page views on route changes
-    trackPageView(location.pathname + location.search);
-    console.log('🔍 GA4: Page view tracked', location.pathname);
-  }, [location]);
+    // Only track page views when UTM data is loaded
+    if (isLoaded) {
+      trackPageViewWithUTM(location.pathname + location.search, trackingData);
+      console.log('🔍 GA4: Page view tracked with UTMs', {
+        path: location.pathname,
+        utms: {
+          source: trackingData.utm_source,
+          medium: trackingData.utm_medium,
+          campaign: trackingData.utm_campaign
+        }
+      });
+    }
+  }, [location, trackingData, isLoaded]);
 
   const value: GA4ContextType = {
     initialized: true,

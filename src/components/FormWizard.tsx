@@ -7,10 +7,11 @@ import { PurchaseMethodStep } from './steps/PurchaseMethodStep';
 import { PersonalDataStep } from './steps/PersonalDataStep';
 import { TreatmentStep } from './steps/TreatmentStep';
 import { SchedulingStep } from './steps/SchedulingStep';
-import { ReviewStep } from './steps/ReviewStep';
+import { ReviewStep } from './ReviewStep';
 import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseSubmission } from '@/hooks/useSupabaseSubmission';
+import { useGA4Tracking } from '@/hooks/useGA4Tracking';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface FormData {
@@ -73,6 +74,9 @@ export const FormWizard: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const { toast } = useToast();
 
+  // GA4 Tracking
+  const { trackStep, trackLead, trackFinalConversion } = useGA4Tracking();
+
   // Dynamic steps based on purchase method
   const getActiveSteps = () => {
     if (formData.modalidadeCompra === 'site-sedex') {
@@ -108,8 +112,12 @@ export const FormWizard: React.FC = () => {
   };
 
   const nextStep = (targetStep?: number) => {
+    const stepNames = ['Modalidade', 'Dados Pessoais', 'Tratamento', 'Agendamento', 'Revisão'];
+    
     if (targetStep) {
       setCurrentStep(targetStep);
+      // Track GA4 step
+      trackStep(stepNames[targetStep - 1], targetStep, formData);
       return;
     }
 
@@ -117,13 +125,17 @@ export const FormWizard: React.FC = () => {
       // Conditional navigation for site oficial
       if (currentStep === 1) {
         setCurrentStep(3); // Modalidade -> Tratamento
+        trackStep('Tratamento', 3, formData);
       } else if (currentStep === 3) {
         setCurrentStep(5); // Tratamento -> Revisão
+        trackStep('Revisão', 5, formData);
       }
     } else {
       // Normal navigation for pagar na entrega
       if (currentStep < 5) {
-        setCurrentStep(currentStep + 1);
+        const nextStepNum = currentStep + 1;
+        setCurrentStep(nextStepNum);
+        trackStep(stepNames[nextStepNum - 1], nextStepNum, formData);
       }
     }
   };
@@ -169,6 +181,9 @@ export const FormWizard: React.FC = () => {
 
     setIsSubmitting(true);
     try {
+      // Track lead generation in GA4
+      trackLead(formData);
+
       // Prepare data for Supabase
       const formattedFormData = {
         purchaseMethod: formData.modalidadeCompra,
@@ -193,6 +208,11 @@ export const FormWizard: React.FC = () => {
 
       if (!result.success) {
         throw new Error(result.error);
+      }
+
+      // Track conversion in GA4 if user accepted
+      if (formData.aceiteFinal) {
+        trackFinalConversion(formData);
       }
 
       // Enviar e-mail de notificação

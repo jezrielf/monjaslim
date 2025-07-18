@@ -7,7 +7,7 @@ import { PurchaseMethodStep } from './steps/PurchaseMethodStep';
 import { PersonalDataStep } from './steps/PersonalDataStep';
 import { TreatmentStep } from './steps/TreatmentStep';
 import { SchedulingStep } from './steps/SchedulingStep';
-import { ReviewStep } from './ReviewStep';
+import { ReviewStep } from './steps/ReviewStep';
 import { SuccessMessage } from './SuccessMessage';
 import { useToast } from '@/hooks/use-toast';
 import { useSupabaseSubmission } from '@/hooks/useSupabaseSubmission';

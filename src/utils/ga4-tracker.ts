@@ -7,7 +7,7 @@ export const GA4_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Substituir pelo seu Measure
 // Initialize GA4
 export const initializeGA4 = () => {
   ReactGA.initialize(GA4_MEASUREMENT_ID, {
-    debug: process.env.NODE_ENV === 'development',
+    testMode: process.env.NODE_ENV === 'development',
   });
 };
 
@@ -18,19 +18,24 @@ export const trackFunnelStep = (stepName: string, stepNumber: number, formData: 
     category: 'lead_generation',
     label: stepName,
     value: stepNumber,
-    custom_parameters: {
-      step_name: stepName,
-      step_number: stepNumber,
-      purchase_method: formData.modalidadeCompra || '',
-      treatment_type: formData.tipoTratamento || '',
-      treatment_price: formData.precoTratamento || '',
-      utm_source: utmData.utm_source || '',
-      utm_medium: utmData.utm_medium || '',
-      utm_campaign: utmData.utm_campaign || '',
-      utm_content: utmData.utm_content || '',
-      utm_term: utmData.utm_term || '',
-      session_id: utmData.session_id || '',
-    }
+  });
+
+  // Send additional parameters via gtag
+  ReactGA.gtag('event', 'funnel_step_completed', {
+    event_category: 'lead_generation',
+    event_label: stepName,
+    value: stepNumber,
+    step_name: stepName,
+    step_number: stepNumber,
+    purchase_method: formData.modalidadeCompra || '',
+    treatment_type: formData.tipoTratamento || '',
+    treatment_price: formData.precoTratamento || '',
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || '',
+    utm_content: utmData.utm_content || '',
+    utm_term: utmData.utm_term || '',
+    session_id: utmData.session_id || '',
   });
 };
 
@@ -41,19 +46,24 @@ export const trackLeadGenerated = (leadData: any, utmData: any) => {
     category: 'lead_generation',
     label: 'form_completed',
     value: 1,
-    custom_parameters: {
-      lead_name: leadData.nome || '',
-      lead_email: leadData.email || '',
-      lead_city: leadData.cidade || '',
-      purchase_method: leadData.modalidadeCompra || '',
-      treatment_type: leadData.tipoTratamento || '',
-      treatment_price: leadData.precoTratamento || '',
-      utm_source: utmData.utm_source || '',
-      utm_medium: utmData.utm_medium || '',
-      utm_campaign: utmData.utm_campaign || '',
-      utm_content: utmData.utm_content || '',
-      utm_term: utmData.utm_term || '',
-    }
+  });
+
+  // Send additional parameters via gtag
+  ReactGA.gtag('event', 'generate_lead', {
+    event_category: 'lead_generation',
+    event_label: 'form_completed',
+    value: 1,
+    lead_name: leadData.nome || '',
+    lead_email: leadData.email || '',
+    lead_city: leadData.cidade || '',
+    purchase_method: leadData.modalidadeCompra || '',
+    treatment_type: leadData.tipoTratamento || '',
+    treatment_price: leadData.precoTratamento || '',
+    utm_source: utmData.utm_source || '',
+    utm_medium: utmData.utm_medium || '',
+    utm_campaign: utmData.utm_campaign || '',
+    utm_content: utmData.utm_content || '',
+    utm_term: utmData.utm_term || '',
   });
 };
 
@@ -66,17 +76,6 @@ export const trackConversion = (leadData: any, utmData: any) => {
     category: 'ecommerce',
     label: leadData.tipoTratamento,
     value: conversionValue,
-    custom_parameters: {
-      currency: 'BRL',
-      transaction_id: `lead_${Date.now()}`,
-      item_name: leadData.tipoTratamento,
-      item_category: 'treatment',
-      quantity: 1,
-      price: conversionValue,
-      utm_source: utmData.utm_source || '',
-      utm_medium: utmData.utm_medium || '',
-      utm_campaign: utmData.utm_campaign || '',
-    }
   });
 
   // Enhanced Ecommerce Purchase Event

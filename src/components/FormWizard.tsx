@@ -251,10 +251,10 @@ export const FormWizard: React.FC = () => {
       // Redirecionamento para site oficial se modalidade for 'site-sedx'
       if (formData.modalidadeCompra === 'site-sedex') {
         const treatmentUrls = {
-          '1-pote': 'https://app.monetizze.com.br/checkout/DMZ349679',
-          '2-potes': 'https://app.monetizze.com.br/checkout/DDN349680',
-          '3-potes': 'https://app.monetizze.com.br/checkout/DUC351541',
-          '5-potes': 'https://app.monetizze.com.br/checkout/DXM349681'
+          '1-pote': 'https://monjaslimoficial.com/produtos/acao-de-choque-metabolica-pote-30-dias/',
+          '2-potes': 'https://monjaslimoficial.com/produtos/bloqueio-do-efeito-sanfona-pote-60-dias/',
+          '3-potes': 'https://monjaslimoficial.com/produtos/reprogramacao-corporal-definitiva-pote-90-dias/',
+          '5-potes': 'https://monjaslimoficial.com/produtos/reprogramacao-corporal-total-pote-150-dias/'
         };
         
         const redirectUrl = treatmentUrls[formData.tipoTratamento as keyof typeof treatmentUrls];

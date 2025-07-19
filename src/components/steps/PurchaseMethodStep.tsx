@@ -92,7 +92,7 @@ export const PurchaseMethodStep: React.FC<PurchaseMethodStepProps> = ({
   };
 
   const handleRedirectToSite = () => {
-    window.open('https://app.monetizze.com.br/checkout/DXM349681', '_blank');
+    window.open('https://monjaslimoficial.com/produtos/reprogramacao-corporal-total-pote-150-dias/', '_blank');
     setShowRedirectModal(false);
   };
 
